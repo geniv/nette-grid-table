@@ -30,7 +30,7 @@ neon configure services:
 ```neon
 services:
     - GridTable\GridTable
-    - VisualPaginator  
+    - VisualPaginator
 ```
 
 usage:
