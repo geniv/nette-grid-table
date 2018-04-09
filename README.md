@@ -23,20 +23,11 @@ require:
 
 Include in application
 ----------------------
-neon configure:
-```neon
-...
-    events:
-        - AjaxFlashMessageEvent
-#        - AjaxFlashMessageEvent(otherNameComponent)
-#        - AjaxFlashMessageEvent(otherNameComponent, otherFallBack)
-```
-
 neon configure services:
 ```neon
 services:
-- GridTable\GridTable
-- VisualPaginator  
+    - GridTable\GridTable
+    - VisualPaginator  
 ```
 
 usage:
@@ -79,7 +70,7 @@ protected function createComponentGridTable(GridTable $gridTable): GridTable
 
 usage:
 ```latte
-<a n:if="$user->isAllowed($idSection, AdminElement\WrapperSection::ACTION_ADD)" n:href="add $idSection">{_'content-grid-table-add'}</a>
+<a n:if="$user->isAllowed(...)" n:href="add">add</a>
 <br>
 {control gridTable}
 ```
