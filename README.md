@@ -1,6 +1,9 @@
 Grid table
 ==========
 
+inspired by:
+http://grid.mesour.com/version2/column/actions/
+
 Installation
 ------------
 ```sh
