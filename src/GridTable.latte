@@ -1,0 +1,32 @@
+<div n:snippet="grid">
+    <table border="1">
+        <tr>
+            <td>#</td>
+            <th n:foreach="$columns as $name=>$item">
+                <a n:tag-if="$item->isOrdering()" n:href="ColumnOrder! (expand) $item->getOrdering()" class="ajax">
+                    {_$item->getCaption()}
+                </a>
+            </th>
+            <th>&nbsp;</th>
+        </tr>
+        <tr n:foreach="$list as $row">
+            {var $id=$row[$configure['pk']]}
+            <td>{$id}</td>
+            <td n:foreach="$columns as $item">
+                {$item->getValue($row)}
+            </td>
+            <td>
+                <a n:foreach="$action as $item"
+                        n:if="$item->isAllowed($presenter)"
+                        href="{$item->getHref($presenter, $row)}"
+                        {if $item->getConfirm()}{confirm $presenter->translator->translate($item->getConfirm(), [$id])}{/if}>
+                    {_$item->getCaption()}
+                </a>
+            </td>
+        </tr>
+        <tr n:if="!$iterations">
+            <td colspan="{count($columns)+1}">{_$configure['emptyText']}</td>
+        </tr>
+    </table>
+    {control visualPaginator}
+</div>
