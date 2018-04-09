@@ -35,19 +35,51 @@ neon configure:
 neon configure services:
 ```neon
 services:
-    - FlashMessage
+- GridTable\GridTable
+- VisualPaginator  
 ```
 
 usage:
 ```php
-protected function createComponentFlashMessage(FlashMessage $flashMessage)
+protected function createComponentGridTable(GridTable $gridTable): GridTable
 {
-    // $flashMessage->setTemplatePath(__DIR__ . '/templates/FlashMessage.latte');
-    return $flashMessage;
+    $gridTable->setSource($this->wrapperSection->getSource());
+
+    $gridTable->setPrimaryKey($this->wrapperSection->getDatabasePk());
+    $gridTable->setItemPerPage($this->wrapperSection->getDatabaseLimit());
+    $gridTable->setEmptyText('content-grid-table-empty');
+    $gridTable->setDefaultOrder($this->wrapperSection->getDatabaseOrderDefault());
+
+    $elements = $this->wrapperSection->getElements();
+
+    $items = $this->wrapperSection->getItems();
+    foreach ($items as $idItem => $item) {
+        $elem = $elements[$idItem]; // load element
+        $column = $gridTable->addColumn($idItem, $elem->getTranslateNameContent());
+        $column->setOrdering($item['ordering']);
+        $column->setCallback(function ($data) use ($elem) {
+            return $elem->getRenderRow($data);
+        });
+    }
+
+    // edit
+    $gridTable->addButton('content-grid-table-edit')
+        ->setLink($this->presenterName . ':edit', [$this->idSection, 'id'])
+        ->setPermission($this->idSection, WrapperSection::ACTION_EDIT);
+
+    // delete
+    $gridTable->addButton('content-grid-table-delete')
+        ->setLink($this->presenterName . ':delete', [$this->idSection, 'id'])
+        ->setPermission($this->idSection, WrapperSection::ACTION_DELETE)
+        ->setConfirm('content-grid-table-delete-confirm');
+
+    return $gridTable;
 }
 ```
 
 usage:
 ```latte
-{control flashMessage}
+<a n:if="$user->isAllowed($idSection, AdminElement\WrapperSection::ACTION_ADD)" n:href="add $idSection">{_'content-grid-table-add'}</a>
+<br>
+{control gridTable}
 ```
