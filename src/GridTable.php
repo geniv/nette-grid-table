@@ -2,12 +2,11 @@
 
 namespace GridTable;
 
-use AutowiredComponent;
 use Dibi\Fluent;
 use GeneralForm\ITemplatePath;
 use Nette\Application\UI\Control;
+use Nette\ComponentModel\IComponent;
 use Nette\Localization\ITranslator;
-use VisualPaginator;
 
 
 /**
@@ -18,11 +17,8 @@ use VisualPaginator;
  */
 class GridTable extends Control implements ITemplatePath
 {
-    use AutowiredComponent;
-
     const
         CONFIGURE_PK = 'pk',
-        CONFIGURE_ITEM_PER_PAGE = 'itemPerPage',
         CONFIGURE_DEFAULT_ORDER = 'defaultOrder',
         CONFIGURE_EMPTY_TEXT = 'emptyText',
 
@@ -32,14 +28,13 @@ class GridTable extends Control implements ITemplatePath
     /** @var ITranslator */
     private $translator = null;
     /** @var string */
-    private $templatePath, $templatePathVisualPaginator;
+    private $templatePath;
     /** @var Configure */
     private $configure;
     /** @var Fluent */
     private $source;
 
 
-//FIXME vyresit vkladani nebo pouzivani visual paginatoru!!!
 //TODO grid je ve snipetu "grid"
 
 
@@ -55,12 +50,9 @@ class GridTable extends Control implements ITemplatePath
         $this->translator = $translator;
 
         $this->configure = new Configure();
-
-        $this->configure->setConfigure(self::CONFIGURE_ITEM_PER_PAGE, 10);
         $this->configure->setConfigure(self::CONFIGURE_EMPTY_TEXT, 'no data');
 
-        $this->templatePath = __DIR__ . '/GridTable.latte';  // implicit path
-        $this->templatePathVisualPaginator = __DIR__ . '/visualPaginator.latte';  // implicit path
+        $this->templatePath = __DIR__ . '/GridTable.latte'; // path
     }
 
 
@@ -88,17 +80,6 @@ class GridTable extends Control implements ITemplatePath
     public function setTemplatePath(string $path)
     {
         $this->templatePath = $path;
-    }
-
-
-    /**
-     * Set template path visual paginator.
-     *
-     * @param string $path
-     */
-    public function setTemplatePathVisualPaginator(string $path)
-    {
-        $this->templatePathVisualPaginator = $path;
     }
 
 
@@ -132,12 +113,26 @@ class GridTable extends Control implements ITemplatePath
      * Set item per page.
      *
      * @param int $itemPerPage
-     * @return GridTable
+     * @throws \Exception
      */
-    public function setItemPerPage(int $itemPerPage): self
+    public function setItemPerPage(int $itemPerPage)
     {
-        $this->configure->setConfigure(self::CONFIGURE_ITEM_PER_PAGE, $itemPerPage);
-        return $this;
+        if (isset($this['visualPaginator'])) {
+            $this['visualPaginator']->getPaginator()->setItemsPerPage($itemPerPage);
+        } else {
+            throw new \Exception('Visual paginator is not define!');
+        }
+    }
+
+
+    /**
+     * Set visual paginator.
+     *
+     * @param IComponent $component
+     */
+    public function setVisualPaginator(IComponent $component)
+    {
+        $this->addComponent($component, 'visualPaginator');
     }
 
 
@@ -254,9 +249,12 @@ class GridTable extends Control implements ITemplatePath
             $this->source->orderBy($defaultOrder);
         }
 
-        // set visual paginator
-        $vp = $this['visualPaginator']->getPaginator();
-        $this->source->limit($vp->getLength())->offset($vp->getOffset());
+        if (isset($this['visualPaginator'])) {
+            // set visual paginator
+            $vp = $this['visualPaginator']->getPaginator();
+            $vp->setItemCount(count($this->source));
+            $this->source->limit($vp->getLength())->offset($vp->getOffset());
+        }
 
         $template->list = $this->source;
         $template->configure = $this->configure->getConfigures();
@@ -266,21 +264,5 @@ class GridTable extends Control implements ITemplatePath
         $template->setTranslator($this->translator);
         $template->setFile($this->templatePath);
         $template->render();
-    }
-
-
-    /**
-     * Create component visual paginator.
-     *
-     * @param VisualPaginator $visualPaginator
-     * @return VisualPaginator
-     */
-    protected function createComponentVisualPaginator(VisualPaginator $visualPaginator): VisualPaginator
-    {
-        $visualPaginator->setPathTemplate($this->templatePathVisualPaginator);
-        $vp = $visualPaginator->getPaginator();
-        $vp->setItemCount(count($this->source))
-            ->setItemsPerPage($this->configure->getConfigure(self::CONFIGURE_ITEM_PER_PAGE));
-        return $visualPaginator;
     }
 }
