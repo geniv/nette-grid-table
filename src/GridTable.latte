@@ -19,7 +19,7 @@
                 <a n:foreach="$action as $item"
                         n:if="$item->isAllowed($presenter)"
                         href="{$item->getHref($presenter, $row)}"
-                        {if $item->getConfirm()}{confirm $presenter->translator->translate($item->getConfirm(), [$id])}{/if}>
+                        {if $item->getConfirm()}onclick="return confirm('{$presenter->translator->translate($item->getConfirm(), [$id])}');"{/if}>
                     {_$item->getCaption()}
                 </a>
             </td>
@@ -28,5 +28,7 @@
             <td colspan="{count($columns)+1}">{_$configure['emptyText']}</td>
         </tr>
     </table>
-    {control visualPaginator}
+    {ifset $control['visualPaginator']}
+        {control visualPaginator}
+    {/ifset}
 </div>

@@ -30,13 +30,14 @@ neon configure services:
 ```neon
 services:
     - GridTable\GridTable
-    - VisualPaginator
 ```
 
 usage:
 ```php
-protected function createComponentGridTable(GridTable $gridTable): GridTable
+protected function createComponentGridTable(GridTable $gridTable, VisualPaginator $visualPaginator): GridTable
 {
+    $gridTable->setVisualPaginator($visualPaginator);
+
     $gridTable->setSource($this->wrapperSection->getSource());
 
     $gridTable->setPrimaryKey($this->wrapperSection->getDatabasePk());
