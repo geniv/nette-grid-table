@@ -1,8 +1,7 @@
 Grid table
 ==========
 
-inspired by:
-http://grid.mesour.com/version2/column/actions/
+inspired by: http://grid.mesour.com/version2/column/actions/
 
 Installation
 ------------
@@ -19,9 +18,7 @@ require:
 "php": ">=7.0.0",
 "nette/nette": ">=2.4.0",
 "dibi/dibi": ">=3.0.0",
-"geniv/nette-autowired": ">=1.0.0",
-"geniv/nette-general-form": ">=1.0.0",
-"geniv/nette-visual-paginator": ">=1.0.0"
+"geniv/nette-general-form": ">=1.0.0"
 ```
 
 Include in application
@@ -59,7 +56,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 
     // edit
     $gridTable->addButton('content-grid-table-edit')
-        ->setLink($this->presenterName . ':edit', [$this->idSection, 'id'])
+        ->setLink($this->presenterName . ':edit', [$this->idSection, 'id', null])
         ->setPermission($this->idSection, WrapperSection::ACTION_EDIT);
 
     // delete

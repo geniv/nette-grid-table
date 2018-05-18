@@ -68,7 +68,7 @@ class Button
         $arr = (array_map(function ($row) use ($data) {
             return str_replace(array_keys((array) $data), (array) $data, $row);
         }, $this->configure[self::LINK_ARGUMENTS]));
-        return $presenter->link($this->configure[self::LINK], $arr);
+        return $presenter->link($this->configure[self::LINK], array_filter($arr));
     }
 
 
