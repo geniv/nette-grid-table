@@ -35,9 +35,6 @@ class GridTable extends Control implements ITemplatePath
     private $source;
 
 
-//TODO grid je ve snipetu "grid"
-
-
     /**
      * GridTable constructor.
      *
@@ -156,6 +153,13 @@ class GridTable extends Control implements ITemplatePath
 //    }
 
 
+//    public function setSortable(bool $state): self
+//    {
+//        //TODO nastaveni tedy spis povoleni sotrable na polozky!!!
+//        return $this;
+//    }
+
+
     /**
      * Set default order.
      *
@@ -223,6 +227,11 @@ class GridTable extends Control implements ITemplatePath
         // set default order
         if ($direction) {
             $this->configure->setConfigure(self::CONFIGURE_DEFAULT_ORDER, [$column => $direction]);
+        }
+
+        // redraw snippet
+        if ($this->presenter->isAjax()) {
+            $this->redrawControl('grid');
         }
     }
 
