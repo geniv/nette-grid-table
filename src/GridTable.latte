@@ -16,10 +16,7 @@
                 {$item->getValue($row)}
             </td>
             <td>
-                <a n:foreach="$action as $item"
-                        n:if="$item->isAllowed($presenter)"
-                        href="{$item->getHref($presenter, $row)}"
-                        {if $item->getConfirm()}onclick="return confirm('{$presenter->translator->translate($item->getConfirm(), [$id])}');"{/if}>
+                <a n:foreach="$action as $item" n:if="$item->isAllowed($presenter)" href="{$item->getHref($presenter, $row)}" {if $item->getConfirm()}onclick="return confirm('{$presenter->translator->translate($item->getConfirm(), [$id])}');"{/if}>
                     {_$item->getCaption()}
                 </a>
             </td>
