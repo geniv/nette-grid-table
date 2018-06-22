@@ -20,7 +20,8 @@ class Column
         HEADER = 'header',
         ORDERING = 'ordering',
         ORDERING_STATE = 'state',
-        ORDERING_DIRECTION = 'direction',
+        ORDERING_NEXT_DIRECTION = 'next_direction',
+        ORDERING_CURRENT_DIRECTION = 'current_direction',
         CALLBACK = 'callback';
 
     /** @var array */
@@ -68,13 +69,43 @@ class Column
 
 
     /**
-     * Get href.
+     * Get order href.
      *
      * @return array
      */
-    public function getOrdering(): array
+    public function getOrderHref(): array
     {
-        return [$this->configure[self::NAME], $this->configure[self::ORDERING][self::ORDERING_DIRECTION]];
+        return [$this->configure[self::NAME], $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION]];
+    }
+
+
+    /**
+     * Get current order.
+     *
+     * @return string
+     */
+    public function getCurrentOrder(): string
+    {
+        return $this->configure[self::ORDERING][self::ORDERING_CURRENT_DIRECTION] ?? '';
+    }
+
+
+    /**
+     * Set order.
+     *
+     * @internal
+     * @param string|null $direction
+     */
+    public function setOrder(string $direction = null)
+    {
+        $switchDirection = [
+            null   => 'ASC',
+            'ASC'  => 'DESC',
+            'DESC' => null,
+        ];
+
+        $this->configure[self::ORDERING][self::ORDERING_CURRENT_DIRECTION] = $direction;
+        $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] = $switchDirection[$direction];
     }
 
 
@@ -104,32 +135,10 @@ class Column
     public function setOrdering(bool $ordering = true): self
     {
         $this->configure[self::ORDERING] = [
-            self::ORDERING_STATE     => $ordering,
-            self::ORDERING_DIRECTION => 'ASC',
+            self::ORDERING_STATE          => $ordering,
+            self::ORDERING_NEXT_DIRECTION => 'ASC',
         ];
         return $this;
-    }
-
-
-    /**
-     * Set order direction
-     *
-     * @param string|null $direction
-     */
-    public function setOrderDirection(string $direction = null)
-    {
-        $this->configure[self::ORDERING][self::ORDERING_DIRECTION] = $direction;
-    }
-
-
-    /**
-     * Get order direction.
-     *
-     * @return string
-     */
-    public function getOrderDirection(): string
-    {
-        return $this->configure[self::ORDERING][self::ORDERING_DIRECTION] ?? '';
     }
 
 
