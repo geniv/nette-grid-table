@@ -123,6 +123,17 @@ class Column
 
 
     /**
+     * Get order direction.
+     *
+     * @return string
+     */
+    public function getOrderDirection(): string
+    {
+        return $this->configure[self::ORDERING][self::ORDERING_DIRECTION] ?? '';
+    }
+
+
+    /**
      * Set callback.
      *
      * @param callable $callback
