@@ -20,7 +20,6 @@ class GridTable extends Control implements ITemplatePath
     const
         CONFIGURE_PK = 'pk',
         CONFIGURE_ORDER = 'order',
-        CONFIGURE_EMPTY_TEXT = 'empty_text',
 
         COLUMN = 'column',
         ACTION = 'action';
@@ -47,7 +46,6 @@ class GridTable extends Control implements ITemplatePath
         $this->translator = $translator;
 
         $this->configure = new Configure();
-        $this->configure->setConfigure(self::CONFIGURE_EMPTY_TEXT, 'no data');
 
         $this->templatePath = __DIR__ . '/GridTable.latte'; // path
     }
@@ -89,19 +87,6 @@ class GridTable extends Control implements ITemplatePath
     public function setSource(Fluent $source): self
     {
         $this->source = $source;
-        return $this;
-    }
-
-
-    /**
-     * Set empty text.
-     *
-     * @param string $text
-     * @return GridTable
-     */
-    public function setEmptyText(string $text): self
-    {
-        $this->configure->setConfigure(self::CONFIGURE_EMPTY_TEXT, $text);
         return $this;
     }
 

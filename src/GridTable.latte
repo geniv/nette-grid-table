@@ -8,7 +8,7 @@
                     {if $item->isOrdering()}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="18"><use xlink:href="#sort-icon-{$item->getCurrentOrder()|lower}" /></svg>{/if}
                 </a>
             </th>
-            <th>&nbsp;</th>
+            <th>{_'grid-table-action'}</th>
         </tr>
         <tr n:foreach="$list as $row">
             {var $id=$row[$configure['pk']]}
@@ -23,7 +23,7 @@
             </td>
         </tr>
         <tr n:if="!$iterations">
-            <td style="text-align: center" colspan="{count($columns)+2}">{_$configure['emptyText']}</td>
+            <td style="text-align: center" colspan="{count($columns)+2}">{_'grid-table-empty-text'}</td>
         </tr>
     </table>
     {ifset $control['visualPaginator']}
