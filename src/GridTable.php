@@ -19,8 +19,8 @@ class GridTable extends Control implements ITemplatePath
 {
     const
         CONFIGURE_PK = 'pk',
-        CONFIGURE_DEFAULT_ORDER = 'defaultOrder',
-        CONFIGURE_EMPTY_TEXT = 'emptyText',
+        CONFIGURE_ORDER = 'order',
+        CONFIGURE_EMPTY_TEXT = 'empty_text',
 
         COLUMN = 'column',
         ACTION = 'action';
@@ -169,7 +169,7 @@ class GridTable extends Control implements ITemplatePath
     public function setDefaultOrder(array $order): self
     {
         if ($order) {
-            $this->configure->setConfigure(self::CONFIGURE_DEFAULT_ORDER, $order);
+            $this->configure->setConfigure(self::CONFIGURE_ORDER, $order);
         }
         return $this;
     }
@@ -212,21 +212,15 @@ class GridTable extends Control implements ITemplatePath
      */
     public function handleColumnOrder(string $column, string $direction = null)
     {
-        $switchDirection = [
-            null   => 'ASC',
-            'ASC'  => 'DESC',
-            'DESC' => null,
-        ];
-
         // set next order direction
         $columns = $this->configure->getConfigure(self::COLUMN);
         if (isset($columns[$column])) {
-            $columns[$column]->setOrderDirection($switchDirection[$direction]);
+            $columns[$column]->setOrder($direction);
         }
 
         // set default order
         if ($direction) {
-            $this->configure->setConfigure(self::CONFIGURE_DEFAULT_ORDER, [$column => $direction]);
+            $this->configure->setConfigure(self::CONFIGURE_ORDER, [$column => $direction]);
         }
 
         // redraw snippet
@@ -252,10 +246,10 @@ class GridTable extends Control implements ITemplatePath
             throw new \Exception('Source is not define!');
         }
 
-        // default ordering
-        $defaultOrder = $this->configure->getConfigure(self::CONFIGURE_DEFAULT_ORDER);
-        if ($defaultOrder) {
-            $this->source->orderBy($defaultOrder);
+        // ordering
+        $order = $this->configure->getConfigure(self::CONFIGURE_ORDER);
+        if ($order) {
+            $this->source->orderBy($order);
         }
 
         if (isset($this['visualPaginator'])) {
