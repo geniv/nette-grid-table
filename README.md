@@ -33,22 +33,22 @@ usage:
 ```php
 protected function createComponentGridTable(GridTable $gridTable, VisualPaginator $visualPaginator): GridTable
 {
+    $visualPaginator->setPathTemplate(__DIR__ . '/templates/visualPaginator.latte');
     $gridTable->setVisualPaginator($visualPaginator);
-
-    $gridTable->setSource($this->wrapperSection->getSource());
-
-    $gridTable->setPrimaryKey($this->wrapperSection->getDatabasePk());
     $gridTable->setItemPerPage($this->wrapperSection->getDatabaseLimit());
-    $gridTable->setEmptyText('content-grid-table-empty');
+
+    $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
+    $gridTable->setSource($this->wrapperSection->getSource());
+    $gridTable->setPrimaryKey($this->wrapperSection->getDatabasePk());
     $gridTable->setDefaultOrder($this->wrapperSection->getDatabaseOrderDefault());
 
     $elements = $this->wrapperSection->getElements();
 
     $items = $this->wrapperSection->getItems();
-    foreach ($items as $idItem => $item) {
+    foreach ($items as $idItem => $configure) {
         $elem = $elements[$idItem]; // load element
         $column = $gridTable->addColumn($idItem, $elem->getTranslateNameContent());
-        $column->setOrdering($item['ordering']);
+        $column->setOrdering($configure['ordering']);
         $column->setCallback(function ($data) use ($elem) {
             return $elem->getRenderRow($data);
         });
