@@ -22,7 +22,8 @@ class Button
         LINK = 'link',
         LINK_ARGUMENTS = 'link-arguments',
         PERMISSION_RESOURCE = 'permission_resource',
-        PERMISSION_PRIVILEGE = 'permission_privilege';
+        PERMISSION_PRIVILEGE = 'permission_privilege',
+        HTML_CLASS = 'class';
 
     /** @var array */
     private $configure = [];
@@ -68,9 +69,20 @@ class Button
      */
     public function getHref(IPresenter $presenter, $data): string
     {
-        $arr = (array_map(function ($row) use ($data) {
-            return str_replace(array_keys((array) $data), (array) $data, $row);
-        }, $this->configure[self::LINK_ARGUMENTS]));
+        // merge data and request data
+        $data = array_merge((array) $data, $presenter->request->getParameters());
+        $arr = array_map(function ($row) use ($data) {
+            if ($row[0] == '%') {
+                // detect request data
+                $index = substr($row, 1);
+                if (isset($data[$index])) {
+                    $row = $data[$index];
+                } else {
+                    $row = null;
+                }
+            }
+            return $row;
+        }, $this->configure[self::LINK_ARGUMENTS]);
         return $presenter->link($this->configure[self::LINK], array_filter($arr));
     }
 
@@ -94,6 +106,17 @@ class Button
     public function getConfirm(): string
     {
         return $this->configure[self::CONFIRM] ?? '';
+    }
+
+
+    /**
+     * Get class.
+     *
+     * @return string
+     */
+    public function getClass(): string
+    {
+        return $this->configure[self::HTML_CLASS] ?? '';
     }
 
 
@@ -141,6 +164,19 @@ class Button
     {
         $this->configure[self::PERMISSION_RESOURCE] = $resource;
         $this->configure[self::PERMISSION_PRIVILEGE] = $privilege;
+        return $this;
+    }
+
+
+    /**
+     * Set class.
+     *
+     * @param string $class
+     * @return Button
+     */
+    public function setClass(string $class): self
+    {
+        $this->configure[self::HTML_CLASS] = $class;
         return $this;
     }
 }
