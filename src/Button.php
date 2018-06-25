@@ -68,9 +68,18 @@ class Button
      */
     public function getHref(IPresenter $presenter, $data): string
     {
-        $arr = (array_map(function ($row) use ($data) {
-            return str_replace(array_keys((array) $data), (array) $data, $row);
-        }, $this->configure[self::LINK_ARGUMENTS]));
+        $data = array_merge((array) $data, $presenter->request->getParameters());
+        $arr = array_map(function ($row) use ($data) {
+            if ($row[0] == '%') {
+                $index = substr($row, 1);
+                if (isset($data[$index])) {
+                    $row = $data[$index];
+                } else {
+                    $row = null;
+                }
+            }
+            return $row;
+        }, $this->configure[self::LINK_ARGUMENTS]);
         return $presenter->link($this->configure[self::LINK], array_filter($arr));
     }
 

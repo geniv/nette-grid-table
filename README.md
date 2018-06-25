@@ -56,12 +56,12 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 
     // edit
     $gridTable->addButton('content-grid-table-edit')
-        ->setLink($this->presenterName . ':edit', [$this->idSection, 'id', null])
+        ->setLink($this->presenterName . ':edit', ['idSection' => $this->idSection, 'id' => '%id', null])
         ->setPermission($this->idSection, WrapperSection::ACTION_EDIT);
 
     // delete
     $gridTable->addButton('content-grid-table-delete')
-        ->setLink($this->presenterName . ':delete', [$this->idSection, 'id'])
+        ->setLink($this->presenterName . ':delete', ['idSection' => $this->idSection, 'id' => '%id'])
         ->setPermission($this->idSection, WrapperSection::ACTION_DELETE)
         ->setConfirm('content-grid-table-delete-confirm');
 
