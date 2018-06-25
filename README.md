@@ -36,6 +36,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
     $visualPaginator->setPathTemplate(__DIR__ . '/templates/visualPaginator.latte');
     $gridTable->setVisualPaginator($visualPaginator);
     $gridTable->setItemPerPage($this->wrapperSection->getDatabaseLimit());
+//    $gridTable->setPage(4);
 
     $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
     $gridTable->setSource($this->wrapperSection->getSource());

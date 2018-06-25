@@ -108,6 +108,22 @@ class GridTable extends Control implements ITemplatePath
 
 
     /**
+     * Set page.
+     *
+     * @param int $page
+     * @throws \Exception
+     */
+    public function setPage(int $page)
+    {
+        if (isset($this['visualPaginator'])) {
+            $this['visualPaginator']->getPaginator()->setPage($page);
+        } else {
+            throw new \Exception('Visual paginator is not define!');
+        }
+    }
+
+
+    /**
      * Set visual paginator.
      *
      * @param IComponent $component
@@ -134,13 +150,6 @@ class GridTable extends Control implements ITemplatePath
 //    public function setMultipleSelect(bool $enable): self
 //    {
 //        //TODO konektor na multiselectivni mazani polozek pres checkboxy
-//        return $this;
-//    }
-
-
-//    public function setSortable(bool $state): self
-//    {
-//        //TODO nastaveni tedy spis povoleni sotrable na polozky!!!
 //        return $this;
 //    }
 

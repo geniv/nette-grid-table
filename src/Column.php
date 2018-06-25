@@ -153,4 +153,11 @@ class Column
         $this->configure[self::CALLBACK] = $callback;
         return $this;
     }
+
+
+//    public function setSelect(bool $enable): self
+//    {
+//        //TODO selectovani radku podle hodnoty v selectu - filtrovani podle enum/select hodnot
+//        return $this;
+//    }
 }
