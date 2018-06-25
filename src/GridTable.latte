@@ -5,7 +5,11 @@
             <th n:foreach="$columns as $name=>$item">
                 <a n:tag-if="$item->isOrdering()" n:href="ColumnOrder! (expand) $item->getOrderHref()" class="ajax">
                     {_$item->getCaption()}
-                    {if $item->isOrdering()}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="18"><use xlink:href="#sort-icon-{$item->getCurrentOrder()|lower}" /></svg>{/if}
+                    {if $item->isOrdering()}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18">
+                            <use xlink:href="#sort-icon-{$item->getCurrentOrder()|lower}"/>
+                        </svg>
+                    {/if}
                 </a>
             </th>
             <th>{_'grid-table-action'}</th>
@@ -17,7 +21,9 @@
                 {$item->getValue($row)|noescape}
             </td>
             <td>
-                <a n:foreach="$action as $item" n:if="$item->isAllowed($presenter)" href="{$item->getHref($presenter, $row)}" {if $item->getConfirm()}onclick="return confirm('{$presenter->translator->translate($item->getConfirm(), [$id])}');"{/if}>
+                <a n:foreach="$action as $item" n:if="$item->isAllowed($presenter)"
+                        href="{$item->getHref($presenter, $row)}"
+                        n:class="$item->getClass()"{if $item->getConfirm()} onclick="return confirm('{$presenter->translator->translate($item->getConfirm(), [$id])}');"{/if}>
                     {_$item->getCaption()}
                 </a>
             </td>

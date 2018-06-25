@@ -22,7 +22,8 @@ class Button
         LINK = 'link',
         LINK_ARGUMENTS = 'link-arguments',
         PERMISSION_RESOURCE = 'permission_resource',
-        PERMISSION_PRIVILEGE = 'permission_privilege';
+        PERMISSION_PRIVILEGE = 'permission_privilege',
+        HTML_CLASS = 'class';
 
     /** @var array */
     private $configure = [];
@@ -108,6 +109,17 @@ class Button
     }
 
 
+    /**
+     * Get class.
+     *
+     * @return string
+     */
+    public function getClass(): string
+    {
+        return $this->configure[self::HTML_CLASS] ?? '';
+    }
+
+
     /*
      * PHP
      */
@@ -152,6 +164,19 @@ class Button
     {
         $this->configure[self::PERMISSION_RESOURCE] = $resource;
         $this->configure[self::PERMISSION_PRIVILEGE] = $privilege;
+        return $this;
+    }
+
+
+    /**
+     * Set class.
+     *
+     * @param string $class
+     * @return Button
+     */
+    public function setClass(string $class): self
+    {
+        $this->configure[self::HTML_CLASS] = $class;
         return $this;
     }
 }
