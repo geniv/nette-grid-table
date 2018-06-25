@@ -68,9 +68,11 @@ class Button
      */
     public function getHref(IPresenter $presenter, $data): string
     {
+        // merge data and request data
         $data = array_merge((array) $data, $presenter->request->getParameters());
         $arr = array_map(function ($row) use ($data) {
             if ($row[0] == '%') {
+                // detect request data
                 $index = substr($row, 1);
                 if (isset($data[$index])) {
                     $row = $data[$index];
