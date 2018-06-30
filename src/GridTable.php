@@ -192,7 +192,7 @@ class GridTable extends Control implements ITemplatePath
      */
     public function addColumn(string $name, string $header = null): Column
     {
-        $column = new Column($name, $header);
+        $column = new Column($this, $name, $header);
         $this->configure->addConfigure(self::COLUMN, $name, $column);
         return $column;
     }
@@ -233,9 +233,6 @@ class GridTable extends Control implements ITemplatePath
     {
         $template = $this->getTemplate();
 
-//        dump($this->columns);
-//        dump($this->configure);
-
         if (!$this->source) {
             throw new \Exception('Source is not define!');
         }
@@ -257,6 +254,9 @@ class GridTable extends Control implements ITemplatePath
         $template->configure = $this->configure->getConfigures();
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION);
+
+//        dump($template->configure);
+//        dump($template->columns);
 
         $template->setTranslator($this->translator);
         $template->setFile($this->templatePath);

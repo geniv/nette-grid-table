@@ -2,6 +2,7 @@
 
 namespace GridTable;
 
+use GeneralForm\ITemplatePath;
 use Nette\SmartObject;
 
 
@@ -11,7 +12,7 @@ use Nette\SmartObject;
  * @author  geniv
  * @package GridTable
  */
-class Column
+class Column implements ITemplatePath
 {
     use SmartObject;
 
@@ -22,20 +23,25 @@ class Column
         ORDERING_STATE = 'state',
         ORDERING_NEXT_DIRECTION = 'next_direction',
         ORDERING_CURRENT_DIRECTION = 'current_direction',
-        CALLBACK = 'callback';
+        CALLBACK = 'callback',
+        TEMPLATE = 'template';
 
     /** @var array */
     private $configure = [];
+    /** @var GridTable */
+    private $gridTable;
 
 
     /**
      * Column constructor.
      *
+     * @param GridTable   $gridTable
      * @param string      $name
      * @param string|null $header
      */
-    public function __construct(string $name, string $header = null)
+    public function __construct(GridTable $gridTable, string $name, string $header = null)
     {
+        $this->gridTable = $gridTable;
         $this->configure[self::NAME] = $name;
         $this->configure[self::HEADER] = $header;
     }
@@ -44,6 +50,17 @@ class Column
     /*
     * LATTE
     */
+
+
+    /**
+     * Get name.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->configure[self::NAME];
+    }
 
 
     /**
@@ -117,7 +134,15 @@ class Column
      */
     public function getValue($data): string
     {
-        return (isset($this->configure[self::CALLBACK])) ? $this->configure[self::CALLBACK]($data) : $data[$this->configure[self::NAME]];
+        $value = (isset($this->configure[self::CALLBACK]) ? $this->configure[self::CALLBACK]($data) : $data[$this->configure[self::NAME]]);
+        if (isset($this->configure[self::TEMPLATE])) {
+            $template = $this->gridTable->getTemplate();
+            $template->column = $this;
+            $template->value = $value;
+            $template->setFile($this->configure[self::TEMPLATE]);
+            return (string) $template;
+        }
+        return $value;
     }
 
 
@@ -152,6 +177,17 @@ class Column
     {
         $this->configure[self::CALLBACK] = $callback;
         return $this;
+    }
+
+
+    /**
+     * Set template path.
+     *
+     * @param string $path
+     */
+    public function setTemplatePath(string $path)
+    {
+        $this->configure[self::TEMPLATE] = $path;
     }
 
 

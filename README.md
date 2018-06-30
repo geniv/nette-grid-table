@@ -36,7 +36,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
     $visualPaginator->setPathTemplate(__DIR__ . '/templates/visualPaginator.latte');
     $gridTable->setVisualPaginator($visualPaginator);
     $gridTable->setItemPerPage($this->wrapperSection->getDatabaseLimit());
-//    $gridTable->setPage(4);
+//    $gridTable->setPage((int) 4);
 
     $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
     $gridTable->setSource($this->wrapperSection->getSource());
@@ -50,6 +50,8 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         $elem = $elements[$idItem]; // load element
         $column = $gridTable->addColumn($idItem, $elem->getTranslateNameContent());
         $column->setOrdering($configure['ordering']);
+
+        $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
         $column->setCallback(function ($data) use ($elem) {
             return $elem->getRenderRow($data);
         });
@@ -69,6 +71,11 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 
     return $gridTable;
 }
+```
+
+set page in external call:
+```php
+$this['gridTable']->setPage((int) $page);
 ```
 
 usage:
