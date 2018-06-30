@@ -71,6 +71,11 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 }
 ```
 
+set page in external call:
+```php
+$this['gridTable']->setPage((int) $page);
+```
+
 usage:
 ```latte
 <a n:if="$user->isAllowed(...)" n:href="add">add</a>
