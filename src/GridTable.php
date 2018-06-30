@@ -192,7 +192,7 @@ class GridTable extends Control implements ITemplatePath
      */
     public function addColumn(string $name, string $header = null): Column
     {
-        $column = new Column($name, $header);
+        $column = new Column($this, $name, $header);
         $this->configure->addConfigure(self::COLUMN, $name, $column);
         return $column;
     }

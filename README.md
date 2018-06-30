@@ -50,6 +50,8 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         $elem = $elements[$idItem]; // load element
         $column = $gridTable->addColumn($idItem, $elem->getTranslateNameContent());
         $column->setOrdering($configure['ordering']);
+
+        $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
         $column->setCallback(function ($data) use ($elem) {
             return $elem->getRenderRow($data);
         });
