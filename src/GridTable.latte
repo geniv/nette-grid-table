@@ -20,6 +20,7 @@
             <td n:foreach="$columns as $item">
                 {$item->getValue($row)|noescape}
             </td>
+            {*<td n:foreach="$columns as $item">{if $item->getValue($row)}{$item->getValue($row)|noescape|trim|strip}{else}---{/if}</td>*}
             <td>
                 <a n:foreach="$action as $item" n:if="$item->isAllowed($presenter)"
                         href="{$item->getHref($presenter, $row)}"
