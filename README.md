@@ -50,6 +50,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         $elem = $elements[$idItem]; // load element
         $column = $gridTable->addColumn($idItem, $elem->getTranslateNameContent());
         $column->setOrdering($configure['ordering']);
+        $column->setData($configure);
 
         $column->setCallback(function ($data) use ($elem) { return $elem->getRenderRow($data); });
         if ($configure['type'] == 'checkbox') {

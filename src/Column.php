@@ -23,6 +23,7 @@ class Column implements ITemplatePath
         ORDERING_STATE = 'state',
         ORDERING_NEXT_DIRECTION = 'next_direction',
         ORDERING_CURRENT_DIRECTION = 'current_direction',
+        DATA = 'data',
         CALLBACK = 'callback',
         TEMPLATE = 'template';
 
@@ -44,6 +45,25 @@ class Column implements ITemplatePath
         $this->gridTable = $gridTable;
         $this->configure[self::NAME] = $name;
         $this->configure[self::HEADER] = $header;
+    }
+
+
+    /**
+     * Set order.
+     *
+     * @internal
+     * @param string|null $direction
+     */
+    public function setOrder(string $direction = null)
+    {
+        $switchDirection = [
+            null   => 'ASC',
+            'ASC'  => 'DESC',
+            'DESC' => null,
+        ];
+
+        $this->configure[self::ORDERING][self::ORDERING_CURRENT_DIRECTION] = $direction;
+        $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] = $switchDirection[$direction];
     }
 
 
@@ -108,21 +128,15 @@ class Column implements ITemplatePath
 
 
     /**
-     * Set order.
+     * Get data.
      *
-     * @internal
-     * @param string|null $direction
+     * @param string|null $index
+     * @return mixed|null
      */
-    public function setOrder(string $direction = null)
+    public function getData(string $index = null)
     {
-        $switchDirection = [
-            null   => 'ASC',
-            'ASC'  => 'DESC',
-            'DESC' => null,
-        ];
-
-        $this->configure[self::ORDERING][self::ORDERING_CURRENT_DIRECTION] = $direction;
-        $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] = $switchDirection[$direction];
+        $data = $this->configure[self::DATA];
+        return ($index ? ($data[$index] ?? null) : $data);
     }
 
 
@@ -163,6 +177,19 @@ class Column implements ITemplatePath
             self::ORDERING_STATE          => $ordering,
             self::ORDERING_NEXT_DIRECTION => 'ASC',
         ];
+        return $this;
+    }
+
+
+    /**
+     * Set data.
+     *
+     * @param array $data
+     * @return Column
+     */
+    public function setData(array $data): self
+    {
+        $this->configure[self::DATA] = $data;
         return $this;
     }
 
