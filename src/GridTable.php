@@ -253,7 +253,7 @@ class GridTable extends Control implements ITemplatePath
         $template->list = $this->source;
         $template->configure = $this->configure->getConfigures();
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
-        $template->action = $this->configure->getConfigure(self::ACTION);
+        $template->action = $this->configure->getConfigure(self::ACTION, []);
 
 //        dump($template->configure);
 //        dump($template->columns);
