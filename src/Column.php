@@ -101,7 +101,7 @@ class Column implements ITemplatePath
      */
     public function isOrdering(): bool
     {
-        return $this->configure[self::ORDERING][self::ORDERING_STATE];
+        return $this->configure[self::ORDERING][self::ORDERING_STATE] ?? false;
     }
 
 
@@ -135,7 +135,7 @@ class Column implements ITemplatePath
      */
     public function getData(string $index = null)
     {
-        $data = $this->configure[self::DATA];
+        $data = $this->configure[self::DATA] ?? null;
         return ($index ? ($data[$index] ?? null) : $data);
     }
 
@@ -156,7 +156,7 @@ class Column implements ITemplatePath
             $template->setFile($this->configure[self::TEMPLATE]);
             return (string) $template;
         }
-        return $value;
+        return (string) $value;
     }
 
 
