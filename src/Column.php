@@ -156,7 +156,7 @@ class Column implements ITemplatePath
             $template->setFile($this->configure[self::TEMPLATE]);
             return (string) $template;
         }
-        return $value;
+        return (string) $value;
     }
 
 
