@@ -3,6 +3,7 @@
 namespace GridTable;
 
 use Dibi\Fluent;
+use Dibi\IDataSource;
 use GeneralForm\ITemplatePath;
 use Nette\Application\UI\Control;
 use Nette\ComponentModel\IComponent;
@@ -81,10 +82,10 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set source.
      *
-     * @param Fluent $source
+     * @param IDataSource $source
      * @return GridTable
      */
-    public function setSource(Fluent $source): self
+    public function setSource(IDataSource $source): self
     {
         $this->source = $source;
         return $this;
