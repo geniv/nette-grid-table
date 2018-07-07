@@ -153,6 +153,7 @@ class Column implements ITemplatePath
             $template = $this->gridTable->getTemplate();
             $template->column = $this;
             $template->value = $value;
+            $template->data = $this->getData();
             $template->setFile($this->configure[self::TEMPLATE]);
             return (string) $template;
         }
@@ -211,10 +212,14 @@ class Column implements ITemplatePath
      * Set template path.
      *
      * @param string $path
+     * @param array  $data
      */
-    public function setTemplatePath(string $path)
+    public function setTemplatePath(string $path, array $data = [])
     {
         $this->configure[self::TEMPLATE] = $path;
+        if ($data) {
+            $this->setData(array_merge($this->configure[self::DATA] ?? [], $data));
+        }
     }
 
 
