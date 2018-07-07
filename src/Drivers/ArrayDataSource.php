@@ -57,5 +57,27 @@ class ArrayDataSource implements IDataSource
     {
         return $this->iterator->count();
     }
+
+
+    /**
+     * Order by.
+     *
+     * @param array $order
+     */
+    public function orderBy(array $order)
+    {
+        $key = key($order);
+        $direction = $order[$key];
+        // user order by value
+        $this->iterator->uasort(function ($a, $b) use ($key, $direction) {
+            if ($direction == 'ASC') {
+                return $a[$key] > $b[$key];
+            }
+            if ($direction == 'DESC') {
+                return $a[$key] < $b[$key];
+            }
+            return 0;
+        });
+    }
 }
 
