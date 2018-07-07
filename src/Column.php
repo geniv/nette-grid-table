@@ -153,7 +153,9 @@ class Column implements ITemplatePath
             $template = $this->gridTable->getTemplate();
             $template->column = $this;
             $template->value = $value;
-            $template->data = $this->getData();
+            foreach ($this->getData() as $key => $val) {
+                $template->$key = $val;
+            }
             $template->setFile($this->configure[self::TEMPLATE]);
             return (string) $template;
         }
