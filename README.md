@@ -65,6 +65,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         ->setLink($this->presenterName . ':edit', ['idSection' => $this->idSection, 'id' => '%id', null])
         ->setClass('edit-class')
         ->setPermission($this->idSection, WrapperSection::ACTION_EDIT);
+//        ->setData($configure);
 
     // delete
     $gridTable->addButton('content-grid-table-delete')
