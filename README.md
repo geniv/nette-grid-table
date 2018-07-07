@@ -40,6 +40,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 
     $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
     $gridTable->setSource($this->wrapperSection->getSource());
+//    $gridTable->setSource(new ArrayDataSource($this->configureSection->getListSection()));
     $gridTable->setPrimaryKey($this->wrapperSection->getDatabasePk());
     $gridTable->setDefaultOrder($this->wrapperSection->getDatabaseOrderDefault());
 
@@ -52,6 +53,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         $column->setOrdering($configure['ordering']);
         $column->setData($configure);
 
+//        $column->setCallback(function ($data) { return $data; });
         $column->setCallback(function ($data) use ($elem) { return $elem->getRenderRow($data); });
         if ($configure['type'] == 'checkbox') {
             $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
@@ -63,6 +65,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         ->setLink($this->presenterName . ':edit', ['idSection' => $this->idSection, 'id' => '%id', null])
         ->setClass('edit-class')
         ->setPermission($this->idSection, WrapperSection::ACTION_EDIT);
+//        ->setData($configure);
 
     // delete
     $gridTable->addButton('content-grid-table-delete')

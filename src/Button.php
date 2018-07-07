@@ -23,7 +23,8 @@ class Button
         LINK_ARGUMENTS = 'link-arguments',
         PERMISSION_RESOURCE = 'permission_resource',
         PERMISSION_PRIVILEGE = 'permission_privilege',
-        HTML_CLASS = 'class';
+        HTML_CLASS = 'class',
+        DATA = 'data';
 
     /** @var array */
     private $configure = [];
@@ -120,6 +121,19 @@ class Button
     }
 
 
+    /**
+     * Get data.
+     *
+     * @param string|null $index
+     * @return mixed|null
+     */
+    public function getData(string $index = null)
+    {
+        $data = $this->configure[self::DATA] ?? null;
+        return ($index ? ($data[$index] ?? null) : $data);
+    }
+
+
     /*
      * PHP
      */
@@ -177,6 +191,19 @@ class Button
     public function setClass(string $class): self
     {
         $this->configure[self::HTML_CLASS] = $class;
+        return $this;
+    }
+
+
+    /**
+     * Set data.
+     *
+     * @param array $data
+     * @return Button
+     */
+    public function setData(array $data): self
+    {
+        $this->configure[self::DATA] = $data;
         return $this;
     }
 }
