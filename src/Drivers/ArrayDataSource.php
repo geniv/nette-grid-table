@@ -79,5 +79,17 @@ class ArrayDataSource implements IDataSource
             return 0;
         });
     }
+
+
+    /**
+     * __toString.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        // for support (string)$this->source in getCacheId() method
+        return $this->iterator->serialize();
+    }
 }
 
