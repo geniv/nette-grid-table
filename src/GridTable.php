@@ -63,6 +63,21 @@ class GridTable extends Control implements ITemplatePath
     }
 
 
+    /**
+     * Get cache id.
+     *
+     * @internal
+     * @return string
+     */
+    private function getCacheId()
+    {
+        // internal usage for inner-cache in latte
+        $columnId = implode(array_keys($this->configure->getConfigure(self::COLUMN, [])));
+        $listId = serialize(trim((string) $this->source));
+        return $columnId . $listId;
+    }
+
+
     /*
      * Global configure (one time)
      */
@@ -251,6 +266,7 @@ class GridTable extends Control implements ITemplatePath
             $this->source->limit($vp->getLength())->offset($vp->getOffset());
         }
 
+        $template->cacheId = $this->getCacheId();   // for inner-cache
         $template->list = $this->source;
         $template->configure = $this->configure->getConfigures();
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
