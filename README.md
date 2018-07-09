@@ -41,10 +41,13 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
     $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
     $gridTable->setSource($this->wrapperSection->getSource());
 //    $gridTable->setSource(new ArrayDataSource($this->configureSection->getListSection()));
-    $gridTable->setPrimaryKey($this->wrapperSection->getDatabasePk());
+    $pk = $this->wrapperSection->getDatabasePk();
+    $gridTable->setPrimaryKey($pk);
     $gridTable->setDefaultOrder($this->wrapperSection->getDatabaseOrderDefault());
 
     $elements = $this->wrapperSection->getElements();
+
+    $gridTable->addColumn($pk, '#');
 
     $items = $this->wrapperSection->getItems();
     foreach ($items as $idItem => $configure) {
@@ -64,12 +67,15 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
     $gridTable->addButton('content-grid-table-edit')
         ->setLink($this->presenterName . ':edit', ['idSection' => $this->idSection, 'id' => '%id', null])
         ->setClass('edit-class')
+        ->setData(['svg' => self::SVG_USE_EDIT])
         ->setPermission($this->idSection, WrapperSection::ACTION_EDIT);
 //        ->setData($configure);
 
     // delete
     $gridTable->addButton('content-grid-table-delete')
         ->setLink($this->presenterName . ':delete', ['idSection' => $this->idSection, 'id' => '%id'])
+        ->setClass('btn btn-delete')
+        ->setData(['svg' => self::SVG_USE_DELETE])
         ->setPermission($this->idSection, WrapperSection::ACTION_DELETE)
         ->setConfirm('content-grid-table-delete-confirm');
 
