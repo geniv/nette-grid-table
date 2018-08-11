@@ -110,15 +110,18 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set item per page.
      *
-     * @param int $itemPerPage
+     * @param int  $itemPerPage
+     * @param bool $exception
      * @throws \Exception
      */
-    public function setItemPerPage(int $itemPerPage)
+    public function setItemPerPage(int $itemPerPage, bool $exception = false)
     {
         if (isset($this['visualPaginator'])) {
             $this['visualPaginator']->getPaginator()->setItemsPerPage($itemPerPage);
         } else {
-            throw new \Exception('Visual paginator is not define!');
+            if ($exception) {
+                throw new \Exception('Visual paginator is not define!');
+            }
         }
     }
 
@@ -126,15 +129,18 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set page.
      *
-     * @param int $page
+     * @param int  $page
+     * @param bool $exception
      * @throws \Exception
      */
-    public function setPage(int $page)
+    public function setPage(int $page, bool $exception = false)
     {
         if (isset($this['visualPaginator'])) {
             $this['visualPaginator']->getPaginator()->setPage($page);
         } else {
-            throw new \Exception('Visual paginator is not define!');
+            if ($exception) {
+                throw new \Exception('Visual paginator is not define!');
+            }
         }
     }
 
@@ -161,13 +167,6 @@ class GridTable extends Control implements ITemplatePath
         $this->configure->setConfigure(self::CONFIGURE_PK, $pk);
         return $this;
     }
-
-
-//    public function setMultipleSelect(bool $enable): self
-//    {
-//        //TODO konektor na multiselectivni mazani polozek pres checkboxy
-//        return $this;
-//    }
 
 
     /**
