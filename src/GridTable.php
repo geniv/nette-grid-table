@@ -48,7 +48,6 @@ class GridTable extends Control implements ITemplatePath
         $this->translator = $translator;
 
         $this->configure = new Configure();
-        $this->configure->setConfigure(self::CONFIGURE_SORTABLE, false);
 
         $this->templatePath = __DIR__ . '/GridTable.latte'; // path
     }
@@ -155,7 +154,7 @@ class GridTable extends Control implements ITemplatePath
     public function setVisualPaginator(IComponent $component)
     {
         // disable pagination for sortable
-        if (!$this->configure->getConfigure(self::CONFIGURE_SORTABLE)) {
+        if (!$this->configure->getConfigure(self::CONFIGURE_SORTABLE, false)) {
             $this->addComponent($component, 'visualPaginator');
         }
     }
@@ -169,6 +168,7 @@ class GridTable extends Control implements ITemplatePath
      */
     public function setSortable(bool $state): self
     {
+        // disable pagination for all items
         $this->configure->setConfigure(self::CONFIGURE_SORTABLE, $state);
         return $this;
     }
