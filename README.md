@@ -57,7 +57,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         $column->setOrdering($configure['ordering']);
         $column->setData($configure);
 
-//        $column->setCallback(function ($data, $context) { return $data; });
+//        $column->setCallback(function (array $data, Column $context) { return $data; });
         $column->setCallback(function ($data, $context) use ($elem) { return $elem->getRenderRow($data); });
         if ($configure['type'] == 'checkbox') {
             $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
@@ -78,7 +78,8 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         ->setClass('btn btn-delete')
         ->setData(['svg' => self::SVG_USE_DELETE])
         ->setPermission($this->idSection, WrapperSection::ACTION_DELETE)
-        ->setConfirm('content-grid-table-delete-confirm');
+        ->setConfirm('content-grid-table-delete-confirm')
+        ->setCallback(function (array $data, Button $context) { return $data; });
 
     return $gridTable;
 }
