@@ -150,6 +150,19 @@ class Button
 
 
     /**
+     * Set caption.
+     *
+     * @param string $caption
+     * @return Button
+     */
+    public function setCaption(string $caption): self
+    {
+        $this->configure[self::CAPTION] = $caption;
+        return $this;
+    }
+
+
+    /**
      * Set link.
      *
      * @param string $link
