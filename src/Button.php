@@ -21,10 +21,12 @@ class Button
         CONFIRM = 'confirm',
         LINK = 'link',
         LINK_ARGUMENTS = 'link-arguments',
+        LINK_URL = 'link-url',
         PERMISSION_RESOURCE = 'permission_resource',
         PERMISSION_PRIVILEGE = 'permission_privilege',
         HTML_CLASS = 'class',
-        DATA = 'data';
+        DATA = 'data',
+        CALLBACK = 'callback';
 
     /** @var array */
     private $configure = [];
@@ -72,6 +74,10 @@ class Button
     {
         // merge data and request data
         $data = array_merge((array) $data, $presenter->request->getParameters());
+        // call callback
+        if (isset($this->configure[self::CALLBACK])) {
+            $data = $this->configure[self::CALLBACK]($data, $this);
+        }
         $arr = array_map(function ($row) use ($data) {
             if ($row[0] == '%') {
                 // detect request data
@@ -84,6 +90,10 @@ class Button
             }
             return $row;
         }, $this->configure[self::LINK_ARGUMENTS]);
+        // merge url after substitute
+        if (isset($this->configure[self::LINK_URL])) {
+            $arr = array_merge($arr, $this->configure[self::LINK_URL]);
+        }
         return $presenter->link($this->configure[self::LINK], array_filter($arr));
     }
 
@@ -155,6 +165,19 @@ class Button
 
 
     /**
+     * Set url.
+     *
+     * @param array $arguments
+     * @return Button
+     */
+    public function setUrl(array $arguments = []): self
+    {
+        $this->configure[self::LINK_URL] = $arguments;
+        return $this;
+    }
+
+
+    /**
      * Set confirm.
      *
      * @param $text
@@ -204,6 +227,19 @@ class Button
     public function setData(array $data): self
     {
         $this->configure[self::DATA] = $data;
+        return $this;
+    }
+
+
+    /**
+     * Set callback.
+     *
+     * @param callable $callback
+     * @return Button
+     */
+    public function setCallback(callable $callback): self
+    {
+        $this->configure[self::CALLBACK] = $callback;
         return $this;
     }
 }

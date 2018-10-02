@@ -148,7 +148,7 @@ class Column implements ITemplatePath
      */
     public function getValue($data): string
     {
-        $value = (isset($this->configure[self::CALLBACK]) ? $this->configure[self::CALLBACK]($data) : $data[$this->configure[self::NAME]]);
+        $value = (isset($this->configure[self::CALLBACK]) ? $this->configure[self::CALLBACK]($data, $this) : $data[$this->configure[self::NAME]]);
         if (isset($this->configure[self::TEMPLATE])) {
             $template = $this->gridTable->getTemplate();
             $template->column = $this;
