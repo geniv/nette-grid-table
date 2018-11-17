@@ -96,3 +96,18 @@ usage:
 <br>
 {control gridTable}
 ```
+
+usage with `Multiplier`:
+```php
+public function createComponentGridTableMultiplier(GridTable $gridTable): Multiplier
+{
+    return new Multiplier(function ($index) use ($gridTable) {
+            $gridTable = clone $gridTable;
+
+            $source = clone $this->wrapperSection->getSource();
+            // ...
+
+            return $gridTable;
+        });
+    }
+```
