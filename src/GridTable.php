@@ -2,10 +2,11 @@
 
 namespace GridTable;
 
-use Dibi\Fluent;
 use Dibi\IDataSource;
 use GeneralForm\ITemplatePath;
 use Nette\Application\UI\Control;
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use Nette\ComponentModel\IComponent;
 use Nette\Localization\ITranslator;
 
@@ -32,22 +33,26 @@ class GridTable extends Control implements ITemplatePath
     private $templatePath;
     /** @var Configure */
     private $configure;
-    /** @var Fluent */
+    /** @var IDataSource */
     private $source;
+    /** @var Cache */
+    private $cache;
 
 
     /**
      * GridTable constructor.
      *
+     * @param IStorage         $storage
      * @param ITranslator|null $translator
      */
-    public function __construct(ITranslator $translator = null)
+    public function __construct(IStorage $storage, ITranslator $translator = null)
     {
         parent::__construct();
 
         $this->translator = $translator;
 
         $this->configure = new Configure();
+        $this->cache = new Cache($storage, 'GridTable-GridTable');
 
         $this->templatePath = __DIR__ . '/GridTable.latte'; // path
     }
@@ -239,6 +244,7 @@ class GridTable extends Control implements ITemplatePath
      */
     public function handleColumnOrder(string $column, string $direction = null)
     {
+//        \Tracy\Debugger::fireLog('handleColumnOrder:: ' . $column . '-' . $direction);
         // set next order direction
         $columns = $this->configure->getConfigure(self::COLUMN);
         if (isset($columns[$column])) {
@@ -252,6 +258,7 @@ class GridTable extends Control implements ITemplatePath
 
         // redraw snippet
         if ($this->presenter->isAjax()) {
+            $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
             $this->redrawControl('grid');
         }
     }

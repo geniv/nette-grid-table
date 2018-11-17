@@ -57,7 +57,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         $column->setOrdering($configure['ordering']);
         $column->setData($configure);
 
-//        $column->setCallback(function (array $data, Column $context) { return $data; });
+//        $column->setCallback(function ($data, Column $context) { return $data; });
         $column->setCallback(function ($data, $context) use ($elem) { return $elem->getRenderRow($data); });
         if ($configure['type'] == 'checkbox') {
             $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
@@ -95,4 +95,19 @@ usage:
 <a n:if="$user->isAllowed(...)" n:href="add">add</a>
 <br>
 {control gridTable}
+```
+
+usage with `Multiplier`:
+```php
+public function createComponentGridTableMultiplier(GridTable $gridTable): Multiplier
+{
+    return new Multiplier(function ($index) use ($gridTable) {
+            $gridTable = clone $gridTable;
+
+            $source = clone $this->wrapperSection->getSource();
+            // ...
+
+            return $gridTable;
+        });
+    }
 ```
