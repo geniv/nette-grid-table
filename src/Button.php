@@ -79,7 +79,7 @@ class Button
             $data = $this->configure[self::CALLBACK]($data, $this);
         }
         $arr = array_map(function ($row) use ($data) {
-            if ($row[0] == '%') {
+            if ($row && $row[0] == '%') {
                 // detect request data
                 $index = substr($row, 1);
                 if (isset($data[$index])) {
