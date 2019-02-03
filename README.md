@@ -10,7 +10,7 @@ $ composer require geniv/nette-grid-table
 ```
 or
 ```json
-"geniv/nette-grid-table": "^1.1"
+"geniv/nette-grid-table": "^1.2"
 ```
 
 require:
@@ -37,7 +37,7 @@ usage:
 protected function createComponentGridTable(GridTable $gridTable, VisualPaginator $visualPaginator): GridTable
 {
     $visualPaginator->setPathTemplate(__DIR__ . '/templates/visualPaginator.latte');
-    $gridTable->setVisualPaginator($visualPaginator);
+    $gridTable->setPaginator($visualPaginator->getPaginator(), $visualPaginator);
     $gridTable->setItemPerPage($this->wrapperSection->getDatabaseLimit());
 //    $gridTable->setPage((int) 4);
 //    $gridTable->setSortable(false);
