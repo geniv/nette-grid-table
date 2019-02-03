@@ -3,12 +3,14 @@
 namespace GridTable;
 
 use Dibi\IDataSource;
+use Exception;
 use GeneralForm\ITemplatePath;
 use Nette\Application\UI\Control;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
 use Nette\ComponentModel\IComponent;
 use Nette\Localization\ITranslator;
+use Nette\Utils\Paginator;
 
 
 /**
@@ -37,6 +39,8 @@ class GridTable extends Control implements ITemplatePath
     private $source;
     /** @var Cache */
     private $cache;
+    /** @var Paginator */
+    private $paginator = null;
 
 
     /**
@@ -118,15 +122,15 @@ class GridTable extends Control implements ITemplatePath
      *
      * @param int  $itemPerPage
      * @param bool $exception
-     * @throws \Exception
+     * @throws Exception
      */
     public function setItemPerPage(int $itemPerPage, bool $exception = false)
     {
-        if (isset($this['visualPaginator'])) {
-            $this['visualPaginator']->getPaginator()->setItemsPerPage($itemPerPage);
+        if ($this->paginator) {
+            $this->paginator->setItemsPerPage($itemPerPage);
         } else {
             if ($exception) {
-                throw new \Exception('Visual paginator is not define!');
+                throw new Exception('Visual paginator is not define!');
             }
         }
     }
@@ -137,30 +141,34 @@ class GridTable extends Control implements ITemplatePath
      *
      * @param int  $page
      * @param bool $exception
-     * @throws \Exception
+     * @throws Exception
      */
     public function setPage(int $page, bool $exception = false)
     {
-        if (isset($this['visualPaginator'])) {
-            $this['visualPaginator']->getPaginator()->setPage($page);
+        if ($this->paginator) {
+            $this->paginator->setPage($page);
         } else {
             if ($exception) {
-                throw new \Exception('Visual paginator is not define!');
+                throw new Exception('Visual paginator is not define!');
             }
         }
     }
 
 
     /**
-     * Set visual paginator.
+     * Set paginator.
      *
-     * @param IComponent $component
+     * @param Paginator       $paginator
+     * @param IComponent|null $visualPaginator
      */
-    public function setVisualPaginator(IComponent $component)
+    public function setPaginator(Paginator $paginator, IComponent $visualPaginator = null)
     {
         // disable pagination for sortable
         if (!$this->configure->getConfigure(self::CONFIGURE_SORTABLE, false)) {
-            $this->addComponent($component, 'visualPaginator');
+            $this->paginator = $paginator;
+            if ($visualPaginator) {
+                $this->addComponent($visualPaginator, 'visualPaginator');
+            }
         }
     }
 
@@ -267,14 +275,14 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Render.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function render()
     {
         $template = $this->getTemplate();
 
         if (!$this->source) {
-            throw new \Exception('Source is not define!');
+            throw new Exception('Source is not define!');
         }
 
         // ordering
@@ -283,11 +291,10 @@ class GridTable extends Control implements ITemplatePath
             $this->source->orderBy($order);
         }
 
-        if (isset($this['visualPaginator'])) {
+        if ($this->paginator) {
             // set visual paginator
-            $vp = $this['visualPaginator']->getPaginator();
-            $vp->setItemCount(count($this->source));
-            $this->source->limit($vp->getLength())->offset($vp->getOffset());
+            $this->paginator->setItemCount(count($this->source));
+            $this->source->limit($this->paginator->getLength())->offset($this->paginator->getOffset());
         }
 
         $template->cacheId = $this->getCacheId();   // for inner-cache

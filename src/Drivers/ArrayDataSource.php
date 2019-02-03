@@ -4,6 +4,7 @@ namespace GridTable\Drivers;
 
 use ArrayObject;
 use Dibi\IDataSource;
+use Traversable;
 
 
 /**
@@ -37,7 +38,7 @@ class ArrayDataSource implements IDataSource
      * <b>Traversable</b>
      * @since 5.0.0
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->iterator->getIterator();
     }
@@ -78,6 +79,30 @@ class ArrayDataSource implements IDataSource
             }
             return 0;
         });
+    }
+
+
+    /**
+     * Limit.
+     *
+     * @param int $limit
+     * @return ArrayDataSource
+     */
+    public function limit(int $limit): self
+    {
+        return $this;
+    }
+
+
+    /**
+     * Offset.
+     *
+     * @param int $offset
+     * @return ArrayDataSource
+     */
+    public function offset(int $offset): self
+    {
+        return $this;
     }
 
 
