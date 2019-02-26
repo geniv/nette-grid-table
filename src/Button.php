@@ -3,6 +3,8 @@
 namespace GridTable;
 
 use Nette\Application\IPresenter;
+use Nette\Application\Request;
+use Nette\Application\UI\Presenter;
 use Nette\SmartObject;
 
 
@@ -72,8 +74,15 @@ class Button
      */
     public function getHref(IPresenter $presenter, $data): string
     {
+        // load request data from presenter
+        $requestData = [];
+        $request = $presenter->request->getParameters();
+        array_walk($request, function ($item, $key, $prefix) use (&$requestData) {
+            $requestData[$prefix . '.' . $key] = $item; // add prefix to key in array
+        }, 'request');
+
         // merge data and request data
-        $data = array_merge((array) $data, $presenter->request->getParameters());
+        $data = array_merge((array) $data, $requestData);
         // call callback
         if (isset($this->configure[self::CALLBACK])) {
             $data = $this->configure[self::CALLBACK]($data, $this);
@@ -193,10 +202,10 @@ class Button
     /**
      * Set confirm.
      *
-     * @param $text
-     * @return $this
+     * @param string $text
+     * @return Button
      */
-    public function setConfirm($text)
+    public function setConfirm(string $text): self
     {
         $this->configure[self::CONFIRM] = $text;
         return $this;
