@@ -65,6 +65,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Get configure.
      *
+     * @internal
      * @return Configure
      */
     public function getConfigure(): Configure

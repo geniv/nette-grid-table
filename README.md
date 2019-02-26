@@ -88,6 +88,44 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 }
 ```
 
+##### Drivers:
+- ArrayDataSource(array $data)
+- FinderDataSource(Finder $finder)
+
+##### class GridTable
+```php
+setTemplatePath(string $path)
+setSource(IDataSource $source): self
+setItemPerPage(int $itemPerPage, bool $exception = false)
+setPage(int $page, bool $exception = false)
+setPaginator(Paginator $paginator, IComponent $visualPaginator = null)
+setSortable(bool $state): self
+setPrimaryKey(string $pk): self
+setDefaultOrder(array $order): self
+addButton(string $caption): Button
+addColumn(string $name, string $header = null): Column
+```
+
+##### class Column
+```php
+setOrdering(bool $ordering = true): self
+setData(array $data): self
+setCallback(callable $callback): self
+setTemplatePath(string $path, array $data = []): self
+```
+
+##### class Button
+```php
+setCaption(string $caption): self
+setLink(string $link, array $arguments = []): self
+setUrl(array $arguments = []): self
+setConfirm(string $text): self
+setPermission(string $resource, string $privilege): self
+setClass(string $class): self
+setData(array $data): self
+setCallback(callable $callback): self
+```
+
 set page in external call:
 ```php
 $this['gridTable']->setPage((int) $page);
