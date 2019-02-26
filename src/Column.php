@@ -215,13 +215,15 @@ class Column implements ITemplatePath
      *
      * @param string $path
      * @param array  $data
+     * @return Column
      */
-    public function setTemplatePath(string $path, array $data = [])
+    public function setTemplatePath(string $path, array $data = []): self
     {
         $this->configure[self::TEMPLATE] = $path;
         if ($data) {
             $this->setData(array_merge($this->configure[self::DATA] ?? [], $data));
         }
+        return $this;
     }
 
 
