@@ -89,6 +89,17 @@ class GridTable extends Control implements ITemplatePath
     }
 
 
+    /**
+     * Clean cache.
+     *
+     * @param string $name
+     */
+    public function cleanCache($name = 'grid')
+    {
+        $this->cache->clean([Cache::TAGS => [$name]]);   // internal clean cache for grid
+    }
+
+
     /*
      * Global configure (one time)
      */
