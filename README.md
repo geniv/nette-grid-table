@@ -94,6 +94,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 
 ##### class GridTable
 ```php
+cleanCache($name = 'grid')
 setTemplatePath(string $path)
 setSource(IDataSource $source): self
 setItemPerPage(int $itemPerPage, bool $exception = false)
