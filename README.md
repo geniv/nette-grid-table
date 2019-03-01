@@ -111,7 +111,7 @@ addColumn(string $name, string $header = null): Column
 ```php
 setOrdering(bool $ordering = true): self
 setData(array $data): self
-setCallback(callable $callback): self
+setCallback(callable $callback): self  -  function ($data, Column $context) { return $data[$context->getName()]; }
 setTemplatePath(string $path, array $data = []): self
 ```
 
@@ -122,9 +122,10 @@ setLink(string $link, array $arguments = []): self
 setUrl(array $arguments = []): self
 setConfirm(string $text): self
 setPermission(string $resource, string $privilege): self
+setAllowed(bool $allowed): self
 setClass(string $class): self
 setData(array $data): self
-setCallback(callable $callback): self
+setCallback(callable $callback): self  -  function ($data, Button $context) { return $data[$context->getName()]; }
 ```
 
 set page in external call:
