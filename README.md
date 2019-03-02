@@ -113,6 +113,9 @@ setOrdering(bool $ordering = true): self
 setData(array $data): self
 setCallback(callable $callback): self  -  function ($data, Column $context) { return $data[$context->getName()]; }
 setTemplatePath(string $path, array $data = []): self
+setFormatDateTime(string $format): self
+setFormatBoolean(): self
+setFormatString(string $format): self
 ```
 
 ##### class Button
