@@ -26,7 +26,6 @@ class Button
         LINK_URL = 'link-url',
         PERMISSION_RESOURCE = 'permission_resource',
         PERMISSION_PRIVILEGE = 'permission_privilege',
-        ALLOWED = 'allowed',
         HTML_CLASS = 'class',
         DATA = 'data',
         CALLBACK = 'callback';
@@ -59,10 +58,6 @@ class Button
      */
     public function isAllowed(IPresenter $presenter): bool
     {
-        // use allowed
-        if (isset($this->configure[self::ALLOWED])) {
-            return $this->configure[self::ALLOWED];
-        }
         // use user acl
         if (isset($this->configure[self::PERMISSION_RESOURCE]) && isset($this->configure[self::PERMISSION_PRIVILEGE])) {
             return $presenter->getUser()->isAllowed($this->configure[self::PERMISSION_RESOURCE], $this->configure[self::PERMISSION_PRIVILEGE]);
@@ -229,19 +224,6 @@ class Button
     {
         $this->configure[self::PERMISSION_RESOURCE] = $resource;
         $this->configure[self::PERMISSION_PRIVILEGE] = $privilege;
-        return $this;
-    }
-
-
-    /**
-     * Set allowed.
-     *
-     * @param bool $allowed
-     * @return Button
-     */
-    public function setAllowed(bool $allowed): self
-    {
-        $this->configure[self::ALLOWED] = $allowed;
         return $this;
     }
 
