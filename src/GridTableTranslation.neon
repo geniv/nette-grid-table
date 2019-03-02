@@ -1,2 +1,2 @@
-grid-table-empty-text: "no data"
-grid-table-action: "action"
+grid-table#empty-text: "no data"
+grid-table#action: "action"
