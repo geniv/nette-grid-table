@@ -2,6 +2,7 @@
 
 namespace GridTable;
 
+use DateInterval;
 use GeneralForm\ITemplatePath;
 use Nette\SmartObject;
 use Nette\Utils\DateTime;
@@ -223,7 +224,11 @@ class Column implements ITemplatePath
         $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
             $value = $data[$context->getName()];
             if ($value) {
-                return DateTime::from($value)->format($format);
+                if ($value instanceof DateInterval) {
+                    return $value->format($format);
+                } else {
+                    return DateTime::from($value)->format($format);
+                }
             }
             return null;
         };
@@ -240,7 +245,7 @@ class Column implements ITemplatePath
     {
         $this->configure[self::CALLBACK] = function ($data, Column $context) {
             $value = $data[$context->getName()];
-            return Html::el('input', ['type' => 'checkbox'])->checked($value);
+            return Html::el('input', ['type' => 'checkbox', 'disabled' => true, 'checked' => $value]);
         };
         return $this;
     }
