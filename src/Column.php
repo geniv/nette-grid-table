@@ -4,6 +4,8 @@ namespace GridTable;
 
 use GeneralForm\ITemplatePath;
 use Nette\SmartObject;
+use Nette\Utils\DateTime;
+use Nette\Utils\Html;
 
 
 /**
@@ -206,6 +208,59 @@ class Column implements ITemplatePath
     public function setCallback(callable $callback): self
     {
         $this->configure[self::CALLBACK] = $callback;
+        return $this;
+    }
+
+
+    /**
+     * Set format dateTime.
+     *
+     * @param string $format
+     * @return Column
+     */
+    public function setFormatDateTime(string $format): self
+    {
+        $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
+            $value = $data[$context->getName()];
+            if ($value) {
+                return DateTime::from($value)->format($format);
+            }
+            return null;
+        };
+        return $this;
+    }
+
+
+    /**
+     * Set format boolean.
+     *
+     * @return Column
+     */
+    public function setFormatBoolean(): self
+    {
+        $this->configure[self::CALLBACK] = function ($data, Column $context) {
+            $value = $data[$context->getName()];
+            return Html::el('input', ['type' => 'checkbox'])->checked($value);
+        };
+        return $this;
+    }
+
+
+    /**
+     * Set format string.
+     *
+     * @param string $format
+     * @return Column
+     */
+    public function setFormatString(string $format): self
+    {
+        $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
+            $value = $data[$context->getName()];
+            if ($value) {
+                return sprintf($format, $value);
+            }
+            return $value;
+        };
         return $this;
     }
 
