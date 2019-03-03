@@ -115,7 +115,7 @@ class Column implements ITemplatePath
      */
     public function getOrderHref(): array
     {
-        return [$this->configure[self::NAME], $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION]];
+        return [$this->configure[self::NAME], (isset($this->configure[self::ORDERING]) ? $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] : null)];
     }
 
 
