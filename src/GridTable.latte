@@ -16,8 +16,7 @@
         <tr n:foreach="$list as $row">
             {var $id=$row[$configure['pk']]}
             {*<td>{$id}</td>*}
-            <td n:foreach="$columns as $item">
-                {php $value=$item->getValue($row)}
+            <td n:foreach="$columns as $item"{php $value=$item->getValue($row)} n:class="$item->getData('type')">
                 {if Nette\Utils\Strings::length($value)}{$value|noescape|trim|strip}{else}---{/if}
             </td>
             {*<td n:foreach="$columns as $item">{$item->getValue($row)?:'---'|noescape|trim|strip}</td>*}
