@@ -115,7 +115,7 @@ class Column implements ITemplatePath
      */
     public function getOrderHref(): array
     {
-        return [$this->configure[self::NAME], $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION]];
+        return [$this->configure[self::NAME], (isset($this->configure[self::ORDERING]) ? $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] : null)];
     }
 
 
@@ -244,7 +244,7 @@ class Column implements ITemplatePath
     public function setFormatBoolean(): self
     {
         $this->configure[self::CALLBACK] = function ($data, Column $context) {
-            $value = $data[$context->getName()];
+            $value = (bool) $data[$context->getName()];
             return Html::el('input', ['type' => 'checkbox', 'disabled' => true, 'checked' => $value]);
         };
         return $this;
