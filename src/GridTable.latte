@@ -11,7 +11,7 @@
                     </svg>
                 </a>
             </th>
-            <th>{_'grid-table#action'}</th>
+            <th n:if="$action">{_'grid-table#action'}</th>
         </tr>
         <tr n:foreach="$list as $row">
             {var $id=$row[$configure['pk']]}
