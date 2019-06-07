@@ -11,6 +11,7 @@ use Nette\Caching\IStorage;
 use Nette\ComponentModel\IComponent;
 use Nette\Localization\ITranslator;
 use Nette\Utils\Paginator;
+use stdClass;
 
 
 /**
@@ -268,6 +269,7 @@ class GridTable extends Control implements ITemplatePath
         // set next order direction
         $columns = $this->configure->getConfigure(self::COLUMN);
         if (isset($columns[$column])) {
+            /* @noinspection PhpUndefinedMethodInspection */
             $columns[$column]->setOrder($direction);
         }
 
@@ -300,15 +302,18 @@ class GridTable extends Control implements ITemplatePath
         // ordering
         $order = $this->configure->getConfigure(self::CONFIGURE_ORDER);
         if ($order) {
+            /* @noinspection PhpUndefinedMethodInspection */
             $this->source->orderBy($order);
         }
 
         if ($this->paginator) {
             // set visual paginator
             $this->paginator->setItemCount(count($this->source));
+            /* @noinspection PhpUndefinedMethodInspection */
             $this->source->limit($this->paginator->getLength())->offset($this->paginator->getOffset());
         }
 
+        /** @var stdClass $template */
         $template->cacheId = $this->getCacheId();   // for inner-cache
         $template->list = $this->source;
         $template->configure = $this->configure->getConfigures();
@@ -318,6 +323,7 @@ class GridTable extends Control implements ITemplatePath
 //        dump($template->configure);
 //        dump($template->columns);
 
+        /* @noinspection PhpUndefinedMethodInspection */
         $template->setTranslator($this->translator);
         $template->setFile($this->templatePath);
         $template->render();
