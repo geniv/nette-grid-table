@@ -91,6 +91,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 ##### Drivers:
 - ArrayDataSource(array $data)
 - FinderDataSource(Finder $finder)
+- ApiDataSource(callable $function($limit, $offset){ return ApiCall($limit, $offset); }, 'totalCount', 'result')
 
 ##### class GridTable
 ```php
