@@ -3,8 +3,6 @@
 namespace GridTable;
 
 use Nette\Application\IPresenter;
-use Nette\Application\Request;
-use Nette\Application\UI\Presenter;
 use Nette\SmartObject;
 
 
@@ -60,6 +58,7 @@ class Button
     {
         // use user acl
         if (isset($this->configure[self::PERMISSION_RESOURCE]) && isset($this->configure[self::PERMISSION_PRIVILEGE])) {
+            /* @noinspection PhpUndefinedMethodInspection */
             return $presenter->getUser()->isAllowed($this->configure[self::PERMISSION_RESOURCE], $this->configure[self::PERMISSION_PRIVILEGE]);
         }
         return true;
@@ -77,6 +76,7 @@ class Button
     {
         // load request data from presenter
         $requestData = [];
+        /* @noinspection ALL */
         $request = $presenter->request->getParameters();
         array_walk($request, function ($item, $key, $prefix) use (&$requestData) {
             $requestData[$prefix . '.' . $key] = $item; // add prefix to key in array
@@ -104,6 +104,7 @@ class Button
         if (isset($this->configure[self::LINK_URL])) {
             $arr = array_merge($arr, $this->configure[self::LINK_URL]);
         }
+        /* @noinspection PhpUndefinedMethodInspection */
         return $presenter->link($this->configure[self::LINK], array_filter($arr));
     }
 

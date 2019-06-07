@@ -7,6 +7,7 @@ use GeneralForm\ITemplatePath;
 use Nette\SmartObject;
 use Nette\Utils\DateTime;
 use Nette\Utils\Html;
+use stdClass;
 
 
 /**
@@ -54,8 +55,8 @@ class Column implements ITemplatePath
     /**
      * Set order.
      *
-     * @internal
      * @param string|null $direction
+     * @internal
      */
     public function setOrder(string $direction = null)
     {
@@ -154,6 +155,7 @@ class Column implements ITemplatePath
         $value = (isset($this->configure[self::CALLBACK]) ? $this->configure[self::CALLBACK]($data, $this) : $data[$this->configure[self::NAME]]);
         if (isset($this->configure[self::TEMPLATE])) {
             $template = $this->gridTable->getTemplate();
+            /** @var stdClass $template */
             $template->column = $this;
             $template->value = $value;
             foreach ($this->getData() ?? [] as $key => $val) {

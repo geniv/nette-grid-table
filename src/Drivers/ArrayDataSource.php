@@ -64,21 +64,23 @@ class ArrayDataSource implements IDataSource
      * Order by.
      *
      * @param array $order
+     * @return ArrayDataSource
      */
-    public function orderBy(array $order)
+    public function orderBy(array $order): self
     {
         $key = key($order);
-        $direction = $order[$key];
+        $direction = strtolower($order[$key]);
         // user order by value
         $this->iterator->uasort(function ($a, $b) use ($key, $direction) {
-            if ($direction == 'ASC') {
+            if ($direction == 'asc') {
                 return $a[$key] > $b[$key];
             }
-            if ($direction == 'DESC') {
+            if ($direction == 'desc') {
                 return $a[$key] < $b[$key];
             }
             return 0;
         });
+        return $this;
     }
 
 
