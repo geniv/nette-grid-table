@@ -23,8 +23,6 @@ class ApiDataSource implements IDataSource
     private $count, $limit, $offset;
     /** @var array */
     private $order;
-    /** @var ArrayObject */
-    private $iterator;
 
 
     /**
@@ -39,9 +37,8 @@ class ApiDataSource implements IDataSource
         $this->function = $function;
         $this->dataIndex = $dataIndex;
 
-        // first call api callback
-        $data = call_user_func($this->function, 0, 0);
-
+        // first call api callback for count
+        $data = call_user_func_array($this->function, [0, 0]);
         $this->count = $data[$countIndex];
     }
 
@@ -56,14 +53,15 @@ class ApiDataSource implements IDataSource
      */
     public function getIterator(): Traversable
     {
-        $data = call_user_func($this->function, $this->limit, $this->offset);
-        $this->iterator = new ArrayObject($data[$this->dataIndex]);
+        $data = call_user_func_array($this->function, [$this->limit, $this->offset]);
+        $iterator = new ArrayObject($data[$this->dataIndex]);
 
+        // if order set
         if ($this->order) {
             $key = key($this->order);
             $direction = strtolower($this->order[$key]);
             // user order by value
-            $this->iterator->uasort(function ($a, $b) use ($key, $direction) {
+            $iterator->uasort(function ($a, $b) use ($key, $direction) {
                 if ($direction == 'asc') {
                     return $a[$key] > $b[$key];
                 }
@@ -73,7 +71,7 @@ class ApiDataSource implements IDataSource
                 return 0;
             });
         }
-        return $this->iterator;
+        return $iterator;
     }
 
 
@@ -140,7 +138,7 @@ class ApiDataSource implements IDataSource
     public function __toString()
     {
         // for support (string)$this->source in getCacheId() method
-        return $this->iterator->serialize();
+        return __CLASS__;
     }
 }
 
