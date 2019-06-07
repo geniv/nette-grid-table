@@ -45,6 +45,10 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
     $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
     $gridTable->setSource($this->wrapperSection->getSource());
 //    $gridTable->setSource(new ArrayDataSource($this->configureSection->getListSection()));
+//    $gridTable->setSource(new ApiDataSource(function ($limit, $offset) {
+//        return $this->apiModel->getListApi($limit, $offset);
+//    }, 'totalCount', 'result'));
+
     $pk = $this->wrapperSection->getDatabasePk();
     $gridTable->setPrimaryKey($pk);
     $gridTable->setDefaultOrder($this->wrapperSection->getDatabaseOrderDefault());
