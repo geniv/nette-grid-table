@@ -64,8 +64,9 @@ class ArrayDataSource implements IDataSource
      * Order by.
      *
      * @param array $order
+     * @return ArrayDataSource
      */
-    public function orderBy(array $order)
+    public function orderBy(array $order): self
     {
         $key = key($order);
         $direction = strtolower($order[$key]);
@@ -79,6 +80,7 @@ class ArrayDataSource implements IDataSource
             }
             return 0;
         });
+        return $this;
     }
 
 
