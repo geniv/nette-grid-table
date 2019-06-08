@@ -138,7 +138,7 @@ class ApiDataSource implements IDataSource
     public function __toString()
     {
         // for support (string)$this->source in getCacheId() method
-        return __CLASS__;
+        return __CLASS__ . $this->count . $this->limit . $this->offset . serialize($this->order);
     }
 }
 
