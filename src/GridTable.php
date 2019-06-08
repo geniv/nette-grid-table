@@ -66,8 +66,8 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Get configure.
      *
-     * @internal
      * @return Configure
+     * @internal
      */
     public function getConfigure(): Configure
     {
@@ -78,8 +78,8 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Get cache id.
      *
-     * @internal
      * @return string
+     * @internal
      */
     private function getCacheId()
     {
@@ -308,14 +308,14 @@ class GridTable extends Control implements ITemplatePath
 
         if ($this->paginator) {
             // set visual paginator
-            $this->paginator->setItemCount(count($this->source));
+            $this->paginator->setItemCount(count($this->source));   // call count()
             /* @noinspection PhpUndefinedMethodInspection */
             $this->source->limit($this->paginator->getLength())->offset($this->paginator->getOffset());
         }
 
         /** @var stdClass $template */
-        $template->cacheId = $this->getCacheId();   // for inner-cache
-        $template->list = $this->source;
+        $template->cacheId = $this->getCacheId();   // for inner-cache; call __toString()
+        $template->list = $this->source->getIterator(); // call getIterator()
         $template->configure = $this->configure->getConfigures();
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION, []);
