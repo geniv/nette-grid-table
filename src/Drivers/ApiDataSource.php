@@ -20,9 +20,11 @@ class ApiDataSource implements IDataSource
     /** @var string */
     private $dataIndex;
     /** @var int */
-    private $count, $limit, $offset;
+    private $count, $limit = 0, $offset = 0;
     /** @var array */
     private $order;
+    /** @var ArrayObject */
+    private $iterator;
 
 
     /**
@@ -40,6 +42,20 @@ class ApiDataSource implements IDataSource
         // first call api callback for count
         $data = call_user_func_array($this->function, [0, 0]);
         $this->count = $data[$countIndex];
+
+        $this->iterator = new ArrayObject($data[$this->dataIndex]);
+    }
+
+
+    /**
+     * Load data.
+     */
+    private function loadData()
+    {
+        if ($this->iterator->count() != $this->count) {
+            $data = call_user_func_array($this->function, [$this->limit, $this->offset]);
+            $this->iterator->exchangeArray($data[$this->dataIndex]);
+        }
     }
 
 
@@ -53,15 +69,14 @@ class ApiDataSource implements IDataSource
      */
     public function getIterator(): Traversable
     {
-        $data = call_user_func_array($this->function, [$this->limit, $this->offset]);
-        $iterator = new ArrayObject($data[$this->dataIndex]);
+        $this->loadData();
 
         // if order set
         if ($this->order) {
             $key = key($this->order);
             $direction = strtolower($this->order[$key]);
             // user order by value
-            $iterator->uasort(function ($a, $b) use ($key, $direction) {
+            $this->iterator->uasort(function ($a, $b) use ($key, $direction) {
                 if ($direction == 'asc') {
                     return $a[$key] > $b[$key];
                 }
@@ -71,7 +86,7 @@ class ApiDataSource implements IDataSource
                 return 0;
             });
         }
-        return $iterator;
+        return $this->iterator;
     }
 
 
@@ -113,6 +128,7 @@ class ApiDataSource implements IDataSource
     public function limit(int $limit): self
     {
         $this->limit = $limit;
+        $this->loadData();
         return $this;
     }
 
@@ -126,6 +142,7 @@ class ApiDataSource implements IDataSource
     public function offset(int $offset): self
     {
         $this->offset = $offset;
+        $this->loadData();
         return $this;
     }
 
@@ -138,7 +155,7 @@ class ApiDataSource implements IDataSource
     public function __toString()
     {
         // for support (string)$this->source in getCacheId() method
-        return __CLASS__ . $this->count . $this->limit . $this->offset . serialize($this->order);
+        return $this->limit . $this->offset . $this->count . $this->iterator->serialize();
     }
 }
 
