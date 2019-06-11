@@ -314,8 +314,8 @@ class GridTable extends Control implements ITemplatePath
         }
 
         /** @var stdClass $template */
-        $template->cacheId = $this->getCacheId();   // for inner-cache; call __toString()
-        $template->list = $this->source->getIterator(); // call getIterator()
+        $template->list = $this->source->getIterator(); // call getIterator() -- first (build data)
+        $template->cacheId = $this->getCacheId();   // for inner-cache; call __toString() -- second (use serialize build data)
         $template->configure = $this->configure->getConfigures();
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION, []);
