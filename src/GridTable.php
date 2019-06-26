@@ -33,7 +33,7 @@ class GridTable extends Control implements ITemplatePath
     /** @var ITranslator */
     private $translator = null;
     /** @var string */
-    private $templatePath;
+    private $templatePath, $cacheId;
     /** @var Configure */
     private $configure;
     /** @var IDataSource */
@@ -86,7 +86,7 @@ class GridTable extends Control implements ITemplatePath
         // internal usage for inner-cache in latte
         $columnId = implode(array_keys($this->configure->getConfigure(self::COLUMN, [])));
         $listId = serialize(trim((string) $this->source));
-        return $columnId . $listId;
+        return $columnId . $listId . $this->cacheId;
     }
 
 
@@ -126,6 +126,20 @@ class GridTable extends Control implements ITemplatePath
     public function setSource(IDataSource $source): self
     {
         $this->source = $source;
+        return $this;
+    }
+
+
+    /**
+     * Set cache id.
+     * Set additional custom cache id (because setSource can have external parameters)
+     *
+     * @param string $cacheId
+     * @return GridTable
+     */
+    public function setCacheId(string $cacheId): self
+    {
+        $this->cacheId = $cacheId;
         return $this;
     }
 
