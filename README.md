@@ -44,6 +44,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 
     $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
     $gridTable->setSource($this->wrapperSection->getSource());
+//    $gridTable->setCacheId('123'.$neco);
 //    $gridTable->setSource(new ArrayDataSource($this->configureSection->getListSection()));
 //    $gridTable->setSource(new ApiDataSource(function ($limit, $offset) {
 //        return $this->apiModel->getListApi($limit, $offset);
