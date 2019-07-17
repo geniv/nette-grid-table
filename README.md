@@ -38,46 +38,41 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 {
     $visualPaginator->setPathTemplate(__DIR__ . '/templates/visualPaginator.latte');
     $gridTable->setPaginator($visualPaginator->getPaginator(), $visualPaginator);
-    $gridTable->setItemPerPage($this->wrapperSection->getDatabaseLimit());
+    $gridTable->setItemPerPage($this->getDatabaseLimit());
 //    $gridTable->setPage((int) 4);
 //    $gridTable->setSortable(false);
 
     $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
-    $gridTable->setSource($this->wrapperSection->getSource());
+    $gridTable->setSource($this->getSource());
 //    $gridTable->setCacheId('123'.$neco);
 //    $gridTable->setSource(new ArrayDataSource($this->configureSection->getListSection()));
 //    $gridTable->setSource(new ApiDataSource(function ($limit, $offset) {
 //        return $this->apiModel->getListApi($limit, $offset);
 //    }, 'totalCount', 'result'));
 
-    $pk = $this->wrapperSection->getDatabasePk();
+    $pk = 'id';
     $gridTable->setPrimaryKey($pk);
-    $gridTable->setDefaultOrder($this->wrapperSection->getDatabaseOrderDefault());
-
-    $elements = $this->wrapperSection->getElements();
+    $gridTable->setDefaultOrder(['id' => 'asc']);
 
     $gridTable->addColumn($pk, '#');
 
-    $items = $this->wrapperSection->getItems();
-    foreach ($items as $idItem => $configure) {
-        $elem = $elements[$idItem]; // load element
-        $column = $gridTable->addColumn($idItem, $elem->getTranslateNameContent());
-        $column->setOrdering($configure['ordering']);
-        $column->setData($configure);
+    $column = $gridTable->addColumn('username', 'Jmeno');
+    $column->setOrdering(true);
+    $column->setData(['foo' => 'bar']);
 
 //        $column->setCallback(function ($data, Column $context) { return $data; });
-        $column->setCallback(function ($data, $context) use ($elem) { return $elem->getRenderRow($data); });
-        if ($configure['type'] == 'checkbox') {
-            $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
-        }
-    }
+    $column->setCallback(function ($data) { return $data; });
+   
+    $column = $gridTable->addColumn('username', 'Jmeno');
+    $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
+}
 
     // edit
     $gridTable->addButton('content-grid-table-edit')
         ->setLink($this->presenterName . ':edit', ['idSection' => $this->idSection, 'id' => '%id', null])
         ->setClass('edit-class')
         ->setData(['svg' => self::SVG_USE_EDIT])
-        ->setPermission($this->idSection, WrapperSection::ACTION_EDIT);
+        ->setPermission($this->idSection, 'edit');
 //        ->setData($configure);
 
     // delete
@@ -85,7 +80,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         ->setLink($this->presenterName . ':delete', ['idSection' => $this->idSection, 'id' => '%id'])
         ->setClass('btn btn-delete')
         ->setData(['svg' => self::SVG_USE_DELETE])
-        ->setPermission($this->idSection, WrapperSection::ACTION_DELETE)
+        ->setPermission($this->idSection, 'delete')
         ->setConfirm('content-grid-table-delete-confirm')
         ->setCallback(function (array $data, Button $context) { return $data; });
 
@@ -155,10 +150,11 @@ public function createComponentGridTableMultiplier(GridTable $gridTable): Multip
     return new Multiplier(function ($index) use ($gridTable) {
             $gridTable = clone $gridTable;
 
-            $source = clone $this->wrapperSection->getSource();
+            $source = clone $this->getSource();
             // ...
 
             return $gridTable;
         });
     }
+}
 ```
