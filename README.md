@@ -65,7 +65,6 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
    
     $column = $gridTable->addColumn('username', 'Jmeno');
     $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
-}
 
     // edit
     $gridTable->addButton('content-grid-table-edit')
