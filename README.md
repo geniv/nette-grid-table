@@ -148,13 +148,12 @@ usage with `Multiplier`:
 public function createComponentGridTableMultiplier(GridTable $gridTable): Multiplier
 {
     return new Multiplier(function ($index) use ($gridTable) {
-            $gridTable = clone $gridTable;
+        $gridTable = clone $gridTable;
 
-            $source = clone $this->getSource();
-            // ...
+        $source = clone $this->getSource();
+        // ...
 
             return $gridTable;
-        });
-    }
+    });
 }
 ```
