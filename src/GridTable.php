@@ -38,6 +38,8 @@ class GridTable extends Control implements ITemplatePath
     private $configure;
     /** @var IDataSource */
     private $source;
+    /** @var array */
+    private $sourceLimit;
     /** @var Cache */
     private $cache;
     /** @var Paginator */
@@ -126,6 +128,21 @@ class GridTable extends Control implements ITemplatePath
     public function setSource(IDataSource $source): self
     {
         $this->source = $source;
+        return $this;
+    }
+
+
+    /**
+     * Set source limit.
+     * Default limit and offset for usage without paginator.
+     *
+     * @param int $limit
+     * @param int $offset
+     * @return GridTable
+     */
+    public function setSourceLimit(int $limit, int $offset = 0): self
+    {
+        $this->sourceLimit = ['limit' => $limit, 'offset' => $offset];
         return $this;
     }
 
@@ -332,6 +349,11 @@ class GridTable extends Control implements ITemplatePath
             $this->paginator->setItemCount(count($this->source));   // call count()
             /* @noinspection PhpUndefinedMethodInspection */
             $this->source->limit($this->paginator->getLength())->offset($this->paginator->getOffset());
+        } else {
+            if ($this->sourceLimit) {
+                /* @noinspection PhpUndefinedMethodInspection */
+                $this->source->limit($this->sourceLimit['limit'])->offset($this->sourceLimit['offset']);
+            }
         }
 
         /** @var stdClass $template */

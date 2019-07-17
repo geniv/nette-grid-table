@@ -97,6 +97,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 cleanCache($name = 'grid')
 setTemplatePath(string $path)
 setSource(IDataSource $source): self
+setSourceLimit(int $limit, int $offset = 0): self
 setItemPerPage(int $itemPerPage, bool $exception = false)
 setPage(int $page, bool $exception = false)
 setPaginator(Paginator $paginator, IComponent $visualPaginator = null)
