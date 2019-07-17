@@ -20,7 +20,6 @@
     "nette/caching": ">=2.5",
     "nette/component-model": ">=2.3",
     "nette/utils": ">=2.4",
-    "dibi/dibi": ">=3.0",
     "geniv/nette-general-form": ">=1.0"
   },
   "autoload": {

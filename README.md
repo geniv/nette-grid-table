@@ -10,7 +10,7 @@ $ composer require geniv/nette-grid-table
 ```
 or
 ```json
-"geniv/nette-grid-table": "^1.2"
+"geniv/nette-grid-table": "^1.3"
 ```
 
 require:
@@ -20,7 +20,6 @@ require:
 "nette/caching": ">=2.5",
 "nette/component-model": ">=2.3",
 "nette/utils": ">=2.4",
-"dibi/dibi": ">=3.0",
 "geniv/nette-general-form": ">=1.0"
 ```
 
@@ -88,6 +87,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 ```
 
 ##### Drivers:
+- Dibi IDataSource instance (native)
 - ArrayDataSource(array $data)
 - FinderDataSource(Finder $finder)
 - ApiDataSource(callable $function($limit, $offset){ return ApiCall($limit, $offset); }, 'totalCount', 'result')
@@ -104,6 +104,7 @@ setPaginator(Paginator $paginator, IComponent $visualPaginator = null)
 setSortable(bool $state): self
 setPrimaryKey(string $pk): self
 setDefaultOrder(array $order): self
+setSelection(array $action): self
 addButton(string $caption): Button
 addColumn(string $name, string $header = null): Column
 ```
@@ -117,6 +118,7 @@ setTemplatePath(string $path, array $data = []): self
 setFormatDateTime(string $format): self
 setFormatBoolean(): self
 setFormatString(string $format): self
+setFilter(array $values): self
 ```
 
 ##### class Button
