@@ -3,7 +3,6 @@
 namespace GridTable\Drivers;
 
 use ArrayObject;
-use Dibi\IDataSource;
 use Traversable;
 
 

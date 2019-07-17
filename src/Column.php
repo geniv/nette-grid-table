@@ -217,11 +217,12 @@ class Column implements ITemplatePath
 
     /**
      * Set format dateTime.
+     * Internal callback.
      *
      * @param string $format
      * @return Column
      */
-    public function setFormatDateTime(string $format): self
+    public function setFormatDateTime(string $format = 'Y-m-d H:i:s'): self
     {
         $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
             $value = $data[$context->getName()];
@@ -240,6 +241,7 @@ class Column implements ITemplatePath
 
     /**
      * Set format boolean.
+     * Internal callback.
      *
      * @return Column
      */
@@ -255,6 +257,7 @@ class Column implements ITemplatePath
 
     /**
      * Set format string.
+     * Internal callback.
      *
      * @param string $format
      * @return Column
@@ -289,9 +292,17 @@ class Column implements ITemplatePath
     }
 
 
-//    public function setSelect(bool $enable): self
-//    {
-//        //TODO selectovani radku podle hodnoty v selectu - filtrovani podle enum/select hodnot
-//        return $this;
-//    }
+    /**
+     * Set filter.
+     *
+     * @param array|null $values
+     * @return Column
+     */
+    public function setFilter(array $values = null): self
+    {
+//TODO dopsat implementaci!
+        unset($values);
+
+        return $this;
+    }
 }

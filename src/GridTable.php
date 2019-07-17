@@ -2,10 +2,11 @@
 
 namespace GridTable;
 
-use Dibi\IDataSource;
 use Exception;
 use GeneralForm\ITemplatePath;
+use GridTable\Drivers\IDataSource;
 use Nette\Application\UI\Control;
+use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
 use Nette\ComponentModel\IComponent;
@@ -226,6 +227,7 @@ class GridTable extends Control implements ITemplatePath
 
     /**
      * Set sortable.
+     * Ajax sortable items.
      *
      * @param bool $state
      * @return GridTable
@@ -263,6 +265,33 @@ class GridTable extends Control implements ITemplatePath
             $this->configure->setConfigure(self::CONFIGURE_ORDER, $order);
         }
         return $this;
+    }
+
+
+    /**
+     * Set selection.
+     * Row selection.
+     *
+     * @param array $action
+     * @return GridTable
+     */
+    public function setSelection(array $action): self
+    {
+        return $this;
+    }
+
+
+    protected function createComponentSelectionForm($name): Form
+    {
+        $form = new Form($this, $name);
+
+        //TODO dopsat implementaci!
+        $items = [];
+        foreach ($items as $item) {
+            $form->addCheckbox('id');
+        }
+
+        return $form;
     }
 
 
