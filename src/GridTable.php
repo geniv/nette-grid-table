@@ -185,14 +185,21 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set paginator.
      *
-     * @param Paginator       $paginator
      * @param IComponent|null $visualPaginator
+     * @param callable|null   $callback
      */
-    public function setPaginator(Paginator $paginator, IComponent $visualPaginator = null)
+    public function setPaginator(IComponent $visualPaginator = null, callable $callback = null)
     {
         // disable pagination for sortable
         if (!$this->configure->getConfigure(self::CONFIGURE_SORTABLE, false)) {
-            $this->paginator = $paginator;
+            if (!$callback) {
+                // default paginator component usage VisualPaginator
+                /* @noinspection PhpUndefinedMethodInspection */
+                $this->paginator = $visualPaginator->getPaginator();
+            } else {
+                $this->paginator = $callback($visualPaginator);
+            }
+
             if ($visualPaginator) {
                 $this->addComponent($visualPaginator, 'visualPaginator');
             }
