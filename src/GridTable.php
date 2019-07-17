@@ -126,7 +126,7 @@ class GridTable extends Control implements ITemplatePath
      * @param IDataSource $source
      * @return GridTable
      */
-    public function setSource(IDataSource $source): self
+    public function setSource($source): self
     {
         $this->source = $source;
         return $this;
@@ -277,21 +277,9 @@ class GridTable extends Control implements ITemplatePath
      */
     public function setSelection(array $action): self
     {
+        //TODO musi chytat nejaky JS plugin ktery umozni nejakou grafiku - uvladani musi ukladat do session - ale venkovnim callbyckem a pro ovladani session protoze strankvoani!
+        // a pak podle vybranych chekboxu vyresit na jakou metodu se data predhodi!!!
         return $this;
-    }
-
-
-    protected function createComponentSelectionForm($name): Form
-    {
-        $form = new Form($this, $name);
-
-        //TODO dopsat implementaci!
-        $items = [];
-        foreach ($items as $item) {
-            $form->addCheckbox('id');
-        }
-
-        return $form;
     }
 
 

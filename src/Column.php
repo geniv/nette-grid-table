@@ -303,6 +303,9 @@ class Column implements ITemplatePath
 //TODO dopsat implementaci!
         unset($values);
 
+        //TODO pokud se nedefinuje obsah rak si udela grupu z danehe sloupce + to zanese do cache
+        // tento vyber se taky posype do session pres externi callback volani!!!
+
         return $this;
     }
 }
