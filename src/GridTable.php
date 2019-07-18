@@ -19,7 +19,7 @@ use stdClass;
  *
  * @author  geniv
  * @package GridTable
- * @method onSelectRow(int $id, bool $state)
+ * @method onSelectRow(array $array)
  */
 class GridTable extends Control implements ITemplatePath
 {
@@ -298,8 +298,6 @@ class GridTable extends Control implements ITemplatePath
     {
         $this->selectRow['all'] = $state;
 
-        $this->onSelectRow(0, $state);
-
         // redraw snippet
         if ($this->presenter->isAjax()) {
             $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
@@ -318,7 +316,7 @@ class GridTable extends Control implements ITemplatePath
     {
         $this->selectRow[$id] = $state;
 
-        $this->onSelectRow($id, $state);
+        $this->onSelectRow([$id => $state]);
 
         // redraw snippet
         if ($this->presenter->isAjax()) {
@@ -430,6 +428,7 @@ class GridTable extends Control implements ITemplatePath
             foreach ($template->list as $item) {
                 $this->selectRow[$item[$pk]] = $this->selectRow['all'];
             }
+            $this->onSelectRow($this->selectRow);
         }
         $template->selectRow = $this->selectRow;
 
