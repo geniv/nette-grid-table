@@ -280,6 +280,10 @@ class GridTable extends Control implements ITemplatePath
         // a pak podle vybranych chekboxu vyresit na jakou metodu se data predhodi!!!
 
         $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
+        
+        $columns = $this->configure->getConfigure(self::COLUMN);
+        bdump($columns);
+        
         return $this;
     }
 
