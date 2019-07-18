@@ -102,10 +102,19 @@ class GridTable extends Control implements ITemplatePath
      * Clean cache.
      *
      * @param string $name
+     * @param bool   $redraw
      */
-    public function cleanCache($name = 'grid')
+    public function cleanCache(string $name = 'grid', bool $redraw = true)
     {
-        $this->cache->clean([Cache::TAGS => [$name]]);   // internal clean cache for grid
+        if ($name) {
+            $this->cache->clean([Cache::TAGS => [$name]]);   // internal clean cache for grid
+        }
+
+        if ($this->presenter && $redraw) {
+            if ($this->presenter->isAjax()) {
+                $this->redrawControl('grid');
+            }
+        }
     }
 
 
@@ -307,13 +316,16 @@ class GridTable extends Control implements ITemplatePath
      */
     public function handleSelectionAllRow(bool $state)
     {
-        $this->selectRow['all'] = $state;
+        $this->selectRow = [
+            'data'   => ['all' => $state],
+            'handle' => true,
+        ];
 
-        // redraw snippet
-        if ($this->presenter->isAjax()) {
-            $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
-            $this->redrawControl('grid');
-        }
+//        // redraw snippet
+//        if ($this->presenter->isAjax()) {
+//            $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
+//            $this->redrawControl('grid');
+//        }
     }
 
 
@@ -325,15 +337,17 @@ class GridTable extends Control implements ITemplatePath
      */
     public function handleSelectionRow(int $id, bool $state)
     {
-        $this->selectRow[$id] = $state;
+        $this->selectRow['data'][$id] = $state;
+        $this->selectRow['data']['all'] = false;
+        $this->selectRow['handle'] = true;
 
         $this->onSelectRow([$id => $state]);
 
-        // redraw snippet
-        if ($this->presenter->isAjax()) {
-            $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
-            $this->redrawControl('grid');
-        }
+//        // redraw snippet
+//        if ($this->presenter->isAjax()) {
+//            $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
+//            $this->redrawControl('grid');
+//        }
     }
 
 
@@ -434,14 +448,14 @@ class GridTable extends Control implements ITemplatePath
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION, []);
 
-        if (isset($this->selectRow['all'])) {
+        if (isset($this->selectRow['handle']) && $this->selectRow['handle'] && $this->selectRow['all']) {
             $pk = $this->configure->getConfigure(self::CONFIGURE_PK);
             foreach ($template->list as $item) {
-                $this->selectRow[$item[$pk]] = $this->selectRow['all'];
+                $this->selectRow['data'][$item[$pk]] = $this->selectRow['data']['all'];
             }
-            $this->onSelectRow($this->selectRow);
+            $this->onSelectRow($this->selectRow['data']);
         }
-        $template->selectRow = $this->selectRow;
+        $template->selectRow = $this->selectRow['data'];
 
 //        dump($template->configure);
 //        dump($template->columns);
