@@ -23,6 +23,7 @@ class Column implements ITemplatePath
     const
         NAME = 'name',
         HEADER = 'header',
+        SELECT = 'select',
         ORDERING = 'ordering',
         ORDERING_STATE = 'state',
         ORDERING_NEXT_DIRECTION = 'next_direction',
@@ -291,6 +292,11 @@ class Column implements ITemplatePath
         return $this;
     }
 
+    public function setSelect(bool $state):self
+    {
+        $this->configure[self::SELECT]=$state;
+        return $this;
+    }
 
     /**
      * Set filter.
