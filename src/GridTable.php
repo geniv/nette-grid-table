@@ -27,6 +27,7 @@ class GridTable extends Control implements ITemplatePath
         CONFIGURE_PK = 'pk',
         CONFIGURE_ORDER = 'order',
         CONFIGURE_SORTABLE = 'sortable',
+        CONFIGURE_SELECTION = 'selection',
 
         COLUMN = 'column',
         ACTION = 'action';
@@ -261,9 +262,7 @@ class GridTable extends Control implements ITemplatePath
      */
     public function setDefaultOrder(array $order): self
     {
-        if ($order) {
-            $this->configure->setConfigure(self::CONFIGURE_ORDER, $order);
-        }
+        $this->configure->setConfigure(self::CONFIGURE_ORDER, $order);
         return $this;
     }
 
@@ -279,10 +278,18 @@ class GridTable extends Control implements ITemplatePath
     {
         //TODO musi chytat nejaky JS plugin ktery umozni nejakou grafiku - uvladani musi ukladat do session - ale venkovnim callbyckem a pro ovladani session protoze strankvoani!
         // a pak podle vybranych chekboxu vyresit na jakou metodu se data predhodi!!!
+
+        $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
         return $this;
     }
 
+    
+    public function handleSelectionRow(int $id)
+    {
+        //
+    }
 
+    
     /**
      * Add button.
      *
