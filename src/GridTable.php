@@ -330,7 +330,9 @@ class GridTable extends Control implements ITemplatePath
 
 //TODO doresti zobrazovani akci selekce
 //TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
-//TODO fitlery!
+//TODO filtry!
+//TODO pokud se nedefinuje obsah rak si udela grupu z danehe sloupce + to zanese do cache
+// tento vyber se taky posype do session pres externi callback volani!!!
 
     /**
      * Handle selection row.

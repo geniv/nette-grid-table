@@ -23,7 +23,7 @@ class Column implements ITemplatePath
     const
         NAME = 'name',
         HEADER = 'header',
-//        SELECT = 'select',
+        FILTER = 'filter',
         ORDERING = 'ordering',
         ORDERING_STATE = 'state',
         ORDERING_NEXT_DIRECTION = 'next_direction',
@@ -96,6 +96,17 @@ class Column implements ITemplatePath
     public function getCaption(): string
     {
         return ($this->configure[self::HEADER] ?: $this->configure[self::NAME]);
+    }
+
+
+    /**
+     * Is filter.
+     *
+     * @return bool
+     */
+    public function isFilter(): bool
+    {
+        return $this->configure[self::FILTER] ?? false;
     }
 
 
@@ -292,11 +303,6 @@ class Column implements ITemplatePath
         return $this;
     }
 
-//    public function setSelect(bool $state):self
-//    {
-//        $this->configure[self::SELECT]=$state;
-//        return $this;
-//    }
 
     /**
      * Set filter.
@@ -306,14 +312,7 @@ class Column implements ITemplatePath
      */
     public function setFilter(array $values = null): self
     {
-//TODO musi se udelat group ze zvoleneho soupce a vlozit do filteru, a nebo pokud je tu definovano vlastni tak pouzije tu ty vlastni 
-        unset($values);
-
-        //$value = $data[$context->getName()];
-
-        //TODO pokud se nedefinuje obsah rak si udela grupu z danehe sloupce + to zanese do cache
-        // tento vyber se taky posype do session pres externi callback volani!!!
-
+        $this->configure[self::FILTER] = $values ?? true;
         return $this;
     }
 }
