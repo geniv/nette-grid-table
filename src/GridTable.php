@@ -281,13 +281,12 @@ class GridTable extends Control implements ITemplatePath
 
         $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
         
-        $columns = $this->configure->getConfigure(self::COLUMN);
-        bdump($columns);
-        
         return $this;
     }
 
-    public function handleSelectionAllRow(bool $state){
+
+    public function handleSelectionAllRow(bool $state)
+    {
         $columns = $this->configure->getConfigure(self::COLUMN);
         foreach ($columns as $column) {
             /* @noinspection PhpUndefinedMethodInspection */
@@ -300,7 +299,8 @@ class GridTable extends Control implements ITemplatePath
             $this->redrawControl('grid');
         }
     }
-    
+
+
     public function handleSelectionRow(int $id, bool $state)
     {
         $columns = $this->configure->getConfigure(self::COLUMN);
