@@ -287,10 +287,35 @@ class GridTable extends Control implements ITemplatePath
         return $this;
     }
 
+    public function handleSelectionAllRow(bool $state){
+        $columns = $this->configure->getConfigure(self::COLUMN);
+        foreach ($columns as $column) {
+            /* @noinspection PhpUndefinedMethodInspection */
+            $columns[$column]->setSelect($state);
+        }
+
+        // redraw snippet
+        if ($this->presenter->isAjax()) {
+            $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
+            $this->redrawControl('grid');
+        }
+    }
     
-    public function handleSelectionRow(int $id)
+    public function handleSelectionRow(int $id, bool $state)
     {
-        //
+        $columns = $this->configure->getConfigure(self::COLUMN);
+        if (isset($columns[$column])) {
+            /* @noinspection PhpUndefinedMethodInspection */
+            $columns[$column]->setSelect($state);
+            
+            $this->onSelectRow($id);
+        }
+        
+         // redraw snippet
+        if ($this->presenter->isAjax()) {
+            $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
+            $this->redrawControl('grid');
+        }
     }
 
     
