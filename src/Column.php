@@ -23,7 +23,7 @@ class Column implements ITemplatePath
     const
         NAME = 'name',
         HEADER = 'header',
-        SELECT = 'select',
+//        SELECT = 'select',
         ORDERING = 'ordering',
         ORDERING_STATE = 'state',
         ORDERING_NEXT_DIRECTION = 'next_direction',
@@ -292,11 +292,11 @@ class Column implements ITemplatePath
         return $this;
     }
 
-    public function setSelect(bool $state):self
-    {
-        $this->configure[self::SELECT]=$state;
-        return $this;
-    }
+//    public function setSelect(bool $state):self
+//    {
+//        $this->configure[self::SELECT]=$state;
+//        return $this;
+//    }
 
     /**
      * Set filter.
@@ -308,7 +308,7 @@ class Column implements ITemplatePath
     {
 //TODO musi se udelat group ze zvoleneho soupce a vlozit do filteru, a nebo pokud je tu definovano vlastni tak pouzije tu ty vlastni 
         unset($values);
-        
+
         //$value = $data[$context->getName()];
 
         //TODO pokud se nedefinuje obsah rak si udela grupu z danehe sloupce + to zanese do cache
