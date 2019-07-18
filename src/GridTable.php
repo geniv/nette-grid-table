@@ -323,11 +323,14 @@ class GridTable extends Control implements ITemplatePath
             $this->selectRow[$item[$pk]] = $state;
         }
         $this->onSelectRow($this->selectRow);
-//TODO doresti zobrazovani akci selekce
+
         // redraw snippet
         $this->cleanCache();
     }
 
+//TODO doresti zobrazovani akci selekce
+//TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
+//TODO fitlery!
 
     /**
      * Handle selection row.
