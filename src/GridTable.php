@@ -457,6 +457,19 @@ class GridTable extends Control implements ITemplatePath
         $template->action = $this->configure->getConfigure(self::ACTION, []);
         $template->selectRow = $this->selectRow['data'] ?? [];
 
+
+//        $filter = [];
+//        foreach ($template->list as $item) {
+//            foreach ($template->columns as $column) {
+////                dump($template->list);
+//                if ($column->isFilter()) {
+//                    $filter[$column->getName()][] = $item[$column->getName()];
+//                }
+//            }
+//        }
+//        dump($filter);
+
+
 //        dump($template->configure);
 //        dump($template->columns);
 

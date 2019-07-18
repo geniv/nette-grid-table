@@ -106,7 +106,21 @@ class Column implements ITemplatePath
      */
     public function isFilter(): bool
     {
-        return $this->configure[self::FILTER] ?? false;
+        return (bool) ($this->configure[self::FILTER] ?? false);
+    }
+
+
+    /**
+     * Get filter.
+     *
+     * @return array
+     */
+    public function getFilter(): array
+    {
+        if (is_bool($this->configure[self::FILTER])) {
+            return [];
+        }
+        return ($this->configure[self::FILTER] ?? []);
     }
 
 
@@ -117,7 +131,7 @@ class Column implements ITemplatePath
      */
     public function isOrdering(): bool
     {
-        return $this->configure[self::ORDERING][self::ORDERING_STATE] ?? false;
+        return ($this->configure[self::ORDERING][self::ORDERING_STATE] ?? false);
     }
 
 
