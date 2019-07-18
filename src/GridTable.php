@@ -6,7 +6,6 @@ use Exception;
 use GeneralForm\ITemplatePath;
 use GridTable\Drivers\IDataSource;
 use Nette\Application\UI\Control;
-use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
 use Nette\ComponentModel\IComponent;
@@ -20,6 +19,7 @@ use stdClass;
  *
  * @author  geniv
  * @package GridTable
+ * @method onSelectRow(int $id, bool $state)
  */
 class GridTable extends Control implements ITemplatePath
 {
@@ -46,6 +46,10 @@ class GridTable extends Control implements ITemplatePath
     private $cache;
     /** @var Paginator */
     private $paginator = null;
+    /** @var array */
+    private $selectRow = [];
+    /** @var callable */
+    public $onSelectRow;
 
 
     /**
@@ -89,7 +93,7 @@ class GridTable extends Control implements ITemplatePath
     {
         // internal usage for inner-cache in latte
         $columnId = implode(array_keys($this->configure->getConfigure(self::COLUMN, [])));
-        $listId = serialize(trim((string) $this->source));
+        $listId = serialize(trim((string) $this->source)) . serialize($this->selectRow);
         return $columnId . $listId . $this->cacheId;
     }
 
@@ -280,18 +284,21 @@ class GridTable extends Control implements ITemplatePath
         // a pak podle vybranych chekboxu vyresit na jakou metodu se data predhodi!!!
 
         $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
-        
+
         return $this;
     }
 
 
+    /**
+     * Handle selection all row.
+     *
+     * @param bool $state
+     */
     public function handleSelectionAllRow(bool $state)
     {
-        $columns = $this->configure->getConfigure(self::COLUMN);
-        foreach ($columns as $column) {
-            /* @noinspection PhpUndefinedMethodInspection */
-            $columns[$column]->setSelect($state);
-        }
+        $this->selectRow['all'] = $state;
+
+        $this->onSelectRow(0, $state);
 
         // redraw snippet
         if ($this->presenter->isAjax()) {
@@ -301,24 +308,26 @@ class GridTable extends Control implements ITemplatePath
     }
 
 
+    /**
+     * Handle selection row.
+     *
+     * @param int  $id
+     * @param bool $state
+     */
     public function handleSelectionRow(int $id, bool $state)
     {
-        $columns = $this->configure->getConfigure(self::COLUMN);
-        if (isset($columns[$column])) {
-            /* @noinspection PhpUndefinedMethodInspection */
-            $columns[$column]->setSelect($state);
-            
-            $this->onSelectRow($id);
-        }
-        
-         // redraw snippet
+        $this->selectRow[$id] = $state;
+
+        $this->onSelectRow($id, $state);
+
+        // redraw snippet
         if ($this->presenter->isAjax()) {
             $this->cache->clean([Cache::TAGS => ['grid']]); // clean tag for order, need call setOrder!!
             $this->redrawControl('grid');
         }
     }
 
-    
+
     /**
      * Add button.
      *
@@ -415,6 +424,14 @@ class GridTable extends Control implements ITemplatePath
         $template->configure = $this->configure->getConfigures();
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION, []);
+
+        if (isset($this->selectRow['all'])) {
+            $pk = $this->configure->getConfigure(self::CONFIGURE_PK);
+            foreach ($template->list as $item) {
+                $this->selectRow[$item[$pk]] = $this->selectRow['all'];
+            }
+        }
+        $template->selectRow = $this->selectRow;
 
 //        dump($template->configure);
 //        dump($template->columns);
