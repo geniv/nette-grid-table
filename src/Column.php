@@ -306,8 +306,10 @@ class Column implements ITemplatePath
      */
     public function setFilter(array $values = null): self
     {
-//TODO dopsat implementaci!
+//TODO musi se udelat group ze zvoleneho soupce a vlozit do filteru, a nebo pokud je tu definovano vlastni tak pouzije tu ty vlastni 
         unset($values);
+        
+        //$value = $data[$context->getName()];
 
         //TODO pokud se nedefinuje obsah rak si udela grupu z danehe sloupce + to zanese do cache
         // tento vyber se taky posype do session pres externi callback volani!!!
