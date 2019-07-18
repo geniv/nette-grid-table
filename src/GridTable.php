@@ -290,6 +290,17 @@ class GridTable extends Control implements ITemplatePath
 
 
     /**
+     * Set select row.
+     *
+     * @param array $data
+     */
+    public function setSelectRow(array $data)
+    {
+        $this->selectRow = $data;
+    }
+
+
+    /**
      * Handle selection all row.
      *
      * @param bool $state
