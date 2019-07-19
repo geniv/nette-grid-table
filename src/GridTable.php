@@ -21,6 +21,9 @@ use Traversable;
  * @author  geniv
  * @package GridTable
  * @method onSelectRow(array $array)
+ * @method onColumnOrder(string $column, string|null $direction)
+ * @method onSelectFilter(string $column, string $filter)
+ * @method onSelectPaginatorRange(int $value)
  */
 class GridTable extends Control implements ITemplatePath
 {
@@ -48,9 +51,11 @@ class GridTable extends Control implements ITemplatePath
     /** @var Paginator */
     private $paginator = null;
     /** @var array */
-    private $selectRow = [];
+    private $paginatorRange;
+    /** @var array */
+    private $selectRow = [], $selectFilter = [];
     /** @var callable */
-    public $onSelectRow;
+    public $onColumnOrder, $onSelectRow, $onSelectFilter, $onSelectPaginatorRange;
 
 
     /**
@@ -241,6 +246,17 @@ class GridTable extends Control implements ITemplatePath
 
 
     /**
+     * Set paginator range.
+     *
+     * @param array $range
+     */
+    public function setPaginatorRange(array $range)
+    {
+        $this->paginatorRange = $range;
+    }
+
+
+    /**
      * Set sortable.
      * Ajax sortable items.
      *
@@ -401,6 +417,39 @@ class GridTable extends Control implements ITemplatePath
             $this->configure->setConfigure(self::CONFIGURE_ORDER, [$column => $direction]);
         }
 
+        $this->onColumnOrder($column, $direction);
+
+        // redraw snippet
+        $this->cleanCache();
+    }
+
+
+    /**
+     * Handle select filter.
+     *
+     * @param string $column
+     * @param string $filter
+     */
+    public function handleSelectFilter(string $column, string $filter)
+    {
+        $this->selectFilter[$column] = $filter;
+
+        $this->onSelectFilter($column, $filter);
+
+        // redraw snippet
+        $this->cleanCache();
+    }
+
+
+    /**
+     * Handle select paginator range.
+     *
+     * @param int $value
+     */
+    public function handleSelectPaginatorRange(int $value)
+    {
+        $this->onSelectPaginatorRange($value);
+
         // redraw snippet
         $this->cleanCache();
     }
@@ -455,7 +504,9 @@ class GridTable extends Control implements ITemplatePath
         $template->configure = $this->configure->getConfigures();
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION, []);
-        $template->selectRow = $this->selectRow['data'] ?? [];
+        $template->selectRow = $this->selectRow ?? [];
+        $template->selectRow = $this->selectFilter ?? [];   //TODO aplikovat
+        $template->paginatorRange = $this->paginatorRange;  //TODO aplikovat
 
 
 //        $filter = [];

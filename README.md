@@ -100,13 +100,19 @@ setSource(IDataSource $source): self
 setSourceLimit(int $limit, int $offset = 0): self
 setItemPerPage(int $itemPerPage, bool $exception = false)
 setPage(int $page, bool $exception = false)
-setPaginator(Paginator $paginator, IComponent $visualPaginator = null)
+setPaginator(IComponent $visualPaginator = null, callable $callback = null)
+setPaginatorRange(array $range)
 setSortable(bool $state): self
 setPrimaryKey(string $pk): self
 setDefaultOrder(array $order): self
 setSelection(array $action): self
 addButton(string $caption): Button
 addColumn(string $name, string $header = null): Column
+
+onSelectRow(array $array)
+onColumnOrder(string $column, string|null $direction)
+onSelectFilter(string $column, string $filter)
+onSelectPaginatorRange(int $value)
 ```
 
 ##### class Column
@@ -155,7 +161,7 @@ public function createComponentGridTableMultiplier(GridTable $gridTable): Multip
         $source = clone $this->getSource();
         // ...
 
-            return $gridTable;
+        return $gridTable;
     });
 }
 ```
