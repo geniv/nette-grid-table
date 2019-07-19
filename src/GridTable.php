@@ -51,9 +51,7 @@ class GridTable extends Control implements ITemplatePath
     /** @var Paginator */
     private $paginator = null;
     /** @var array */
-    private $paginatorRange;
-    /** @var array */
-    private $selectRow = [], $selectFilter = [];
+    private $paginatorRange = [], $selectRow = [], $selectFilter = [];
     /** @var callable */
     public $onColumnOrder, $onSelectRow, $onSelectFilter, $onSelectPaginatorRange;
 
@@ -506,7 +504,8 @@ class GridTable extends Control implements ITemplatePath
         $template->action = $this->configure->getConfigure(self::ACTION, []);
         $template->selectRow = $this->selectRow ?? [];
         $template->selectFilter = $this->selectFilter ?? [];   //TODO aplikovat
-        $template->paginatorRange = $this->paginatorRange;
+        $template->paginatorRange = $this->paginatorRange ?? [];
+        $template->paginatorItemsPerPage = $this->paginator->getItemsPerPage() ?? 10;
 
 
 //        $filter = [];
