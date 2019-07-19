@@ -21,7 +21,7 @@ class ApiDataSource implements IDataSource
     /** @var int */
     private $count, $limit = 0, $offset = 0;
     /** @var array */
-    private $order;
+    private $where, $order;
     /** @var ArrayObject */
     private $iterator;
 
@@ -70,7 +70,7 @@ class ApiDataSource implements IDataSource
     {
         $this->loadData();
 
-        // if order set
+        // if set order
         if ($this->order) {
             $key = key($this->order);
             $direction = strtolower($this->order[$key]);
@@ -84,6 +84,18 @@ class ApiDataSource implements IDataSource
                 }
                 return 0;
             });
+        }
+
+        // if set where
+        if ($this->where) {
+            $filter = array_filter((array) $this->iterator, function ($item) {
+                foreach ($this->where as $key => $where) {
+                    return $item[$key] == $where;
+                }
+                return true;
+            });
+            $this->iterator = new ArrayObject($filter);
+            $this->count = $this->iterator->count();
         }
         return $this->iterator;
     }
@@ -142,6 +154,19 @@ class ApiDataSource implements IDataSource
     {
         $this->offset = $offset;
         $this->loadData();
+        return $this;
+    }
+
+
+    /**
+     * Where.
+     *
+     * @param array $condition
+     * @return ApiDataSource
+     */
+    public function where(array $condition): self
+    {
+        $this->where = $condition;
         return $this;
     }
 
