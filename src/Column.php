@@ -118,7 +118,7 @@ class Column implements ITemplatePath
     public function getFilter(): array
     {
         if (is_bool($this->configure[self::FILTER])) {
-            return [];
+            return [];  //TODO doresit jak bude potreba!
         }
         return ($this->configure[self::FILTER] ?? []);
     }

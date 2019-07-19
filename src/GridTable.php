@@ -347,7 +347,7 @@ class GridTable extends Control implements ITemplatePath
 //TODO doresti zobrazovani akci selekce
 //TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
 //TODO filtry!
-//TODO pokud se nedefinuje obsah rak si udela grupu z danehe sloupce + to zanese do cache
+//TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
 // tento vyber se taky posype do session pres externi callback volani!!!
 
     /**
@@ -505,8 +505,8 @@ class GridTable extends Control implements ITemplatePath
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION, []);
         $template->selectRow = $this->selectRow ?? [];
-        $template->selectRow = $this->selectFilter ?? [];   //TODO aplikovat
-        $template->paginatorRange = $this->paginatorRange;  //TODO aplikovat
+        $template->selectFilter = $this->selectFilter ?? [];   //TODO aplikovat
+        $template->paginatorRange = $this->paginatorRange;
 
 
 //        $filter = [];
