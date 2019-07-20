@@ -106,6 +106,7 @@ setSortable(bool $state): self
 setPrimaryKey(string $pk): self
 setDefaultOrder(array $order): self
 setSelection(array $action): self
+setSelectFilter(array $data)
 addButton(string $caption): Button
 addColumn(string $name, string $header = null): Column
 

@@ -22,7 +22,7 @@ use Traversable;
  * @package GridTable
  * @method onSelectRow(array $array)
  * @method onColumnOrder(string $column, string|null $direction)
- * @method onSelectFilter(string $column, string $filter)
+ * @method onSelectFilter(array $selectFilter)
  * @method onSelectPaginatorRange(int $value)
  */
 class GridTable extends Control implements ITemplatePath
@@ -427,12 +427,13 @@ class GridTable extends Control implements ITemplatePath
      *
      * @param string $column
      * @param string $filter
+     * @param bool   $state
      */
-    public function handleSelectFilter(string $column, string $filter)
+    public function handleSelectFilter(string $column, string $filter, bool $state)
     {
-        $this->selectFilter[$column] = $filter;
+        $this->selectFilter[$column][$filter] = $state;
 
-        $this->onSelectFilter($column, $filter);
+        $this->onSelectFilter($this->selectFilter);
 
         // redraw snippet
         $this->cleanCache();
