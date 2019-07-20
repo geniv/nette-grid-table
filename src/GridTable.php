@@ -329,7 +329,7 @@ class GridTable extends Control implements ITemplatePath
 
     /**
      * Set selection.
-     * Row selection.
+     * Turn on selection.
      *
      * @param array $action
      * @return GridTable
@@ -354,6 +354,7 @@ class GridTable extends Control implements ITemplatePath
 
     /**
      * Set select row.
+     * Load data from session.
      *
      * @param array $data
      */
@@ -459,23 +460,8 @@ class GridTable extends Control implements ITemplatePath
 
 
     /**
-     * Set select filter.
-     *
-     * @param array $data
-     * @return GridTable
-     */
-    public function setSelectFilter(array $data): self
-    {
-        $this->selectFilter = $data;
-
-        //TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
-        // tento vyber se taky posype do session pres externi callback volani!!!
-        return $this;
-    }
-
-
-    /**
      * Set filter.
+     * Turn on filter.
      *
      * @param bool $state
      * @return GridTable
@@ -495,6 +481,23 @@ class GridTable extends Control implements ITemplatePath
     public function isFilter(): bool
     {
         return (bool) $this->configure->getConfigure(self::CONFIGURE_FILTER, false);
+    }
+
+
+    /**
+     * Set select filter.
+     * Load data from session.
+     *
+     * @param array $data
+     * @return GridTable
+     */
+    public function setSelectFilter(array $data): self
+    {
+        $this->selectFilter = $data;
+
+        //TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
+        // tento vyber se taky posype do session pres externi callback volani!!!
+        return $this;
     }
 
 
