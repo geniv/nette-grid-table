@@ -69,7 +69,7 @@ class ApiDataSource implements IDataSource
     public function getIterator(): Traversable
     {
         if ($this->where) {
-            $this->limit = 999;
+            $this->limit = 999;  //TODO zpracovat lip?
         }
 
         $this->loadData();
@@ -96,16 +96,15 @@ class ApiDataSource implements IDataSource
             // transfer to array and filter correct value
             $filter = array_filter((array) $this->iterator, function ($item) {
                 $state = false;
+                // compare OR logic
                 foreach ($this->where as $key => $where) {
                     if (is_array($where)) {
-                        // compare for array
+                        // compare array
                         if (in_array($item[$key], $where)) {
                             $state = true;
                         }
-                    }
-
-                    // compare for single number
-                    if (is_numeric($where)) {
+                    } else {
+                        // compare single value
                         if ($item[$key] == $where) {
                             $state = true;
                         }
