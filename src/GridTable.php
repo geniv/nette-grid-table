@@ -32,6 +32,7 @@ class GridTable extends Control implements ITemplatePath
         CONFIGURE_ORDER = 'order',
         CONFIGURE_SORTABLE = 'sortable',
         CONFIGURE_SELECTION = 'selection',
+        CONFIGURE_FILTER = 'filter',
 
         COLUMN = 'column',
         ACTION = 'action';
@@ -185,9 +186,10 @@ class GridTable extends Control implements ITemplatePath
      *
      * @param int  $itemPerPage
      * @param bool $exception
+     * @return GridTable
      * @throws Exception
      */
-    public function setItemPerPage(int $itemPerPage, bool $exception = false)
+    public function setItemPerPage(int $itemPerPage, bool $exception = false): self
     {
         if ($this->paginator) {
             $this->paginator->setItemsPerPage($itemPerPage);
@@ -196,6 +198,7 @@ class GridTable extends Control implements ITemplatePath
                 throw new Exception('Visual paginator is not define!');
             }
         }
+        return $this;
     }
 
 
@@ -223,8 +226,9 @@ class GridTable extends Control implements ITemplatePath
      *
      * @param IComponent|null $visualPaginator
      * @param callable|null   $callback
+     * @return GridTable
      */
-    public function setPaginator(IComponent $visualPaginator = null, callable $callback = null)
+    public function setPaginator(IComponent $visualPaginator = null, callable $callback = null): self
     {
         // disable pagination for sortable
         if (!$this->configure->getConfigure(self::CONFIGURE_SORTABLE, false)) {
@@ -240,6 +244,7 @@ class GridTable extends Control implements ITemplatePath
                 $this->addComponent($visualPaginator, 'visualPaginator');
             }
         }
+        return $this;
     }
 
 
@@ -247,10 +252,26 @@ class GridTable extends Control implements ITemplatePath
      * Set paginator range.
      *
      * @param array $range
+     * @return GridTable
      */
-    public function setPaginatorRange(array $range)
+    public function setPaginatorRange(array $range): self
     {
         $this->paginatorRange = $range;
+        return $this;
+    }
+
+
+    /**
+     * Handle select paginator range.
+     *
+     * @param int $value
+     */
+    public function handleSelectPaginatorRange(int $value)
+    {
+        $this->onSelectPaginatorRange($value);
+
+        // redraw snippet
+        $this->cleanCache();
     }
 
 
@@ -266,6 +287,17 @@ class GridTable extends Control implements ITemplatePath
         // disable pagination for all items
         $this->configure->setConfigure(self::CONFIGURE_SORTABLE, $state);
         return $this;
+    }
+
+
+    /**
+     * Is sortable.
+     *
+     * @return bool
+     */
+    public function isSortable(): bool
+    {
+        return (bool) $this->configure->getConfigure(self::CONFIGURE_SORTABLE, false);
     }
 
 
@@ -297,24 +329,32 @@ class GridTable extends Control implements ITemplatePath
 
     /**
      * Set selection.
-     * Row selection.
+     * Turn on selection.
      *
      * @param array $action
      * @return GridTable
      */
     public function setSelection(array $action): self
     {
-        //TODO musi chytat nejaky JS plugin ktery umozni nejakou grafiku - uvladani musi ukladat do session - ale venkovnim callbyckem a pro ovladani session protoze strankvoani!
-        // a pak podle vybranych chekboxu vyresit na jakou metodu se data predhodi!!!
-
         $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
-
         return $this;
     }
 
 
     /**
+     * Is selection.
+     *
+     * @return bool
+     */
+    public function isSelection(): bool
+    {
+        return (bool) $this->configure->getConfigure(self::CONFIGURE_SELECTION, false);
+    }
+
+
+    /**
      * Set select row.
+     * Load data from session.
      *
      * @param array $data
      */
@@ -338,15 +378,12 @@ class GridTable extends Control implements ITemplatePath
         }
         $this->onSelectRow($this->selectRow);
 
+        //TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
+
         // redraw snippet
         $this->cleanCache();
     }
 
-//TODO doresti zobrazovani akci selekce
-//TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
-//TODO filtry!
-//TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
-// tento vyber se taky posype do session pres externi callback volani!!!
 
     /**
      * Handle selection row.
@@ -423,13 +460,44 @@ class GridTable extends Control implements ITemplatePath
 
 
     /**
+     * Set filter.
+     * Turn on filter.
+     *
+     * @param bool $state
+     * @return GridTable
+     */
+    public function setFilter(bool $state): self
+    {
+        $this->configure->setConfigure(self::CONFIGURE_FILTER, $state);
+        return $this;
+    }
+
+
+    /**
+     * Is select filter.
+     *
+     * @return bool
+     */
+    public function isFilter(): bool
+    {
+        return (bool) $this->configure->getConfigure(self::CONFIGURE_FILTER, false);
+    }
+
+
+    /**
      * Set select filter.
+     * Load data from session.
      *
      * @param array $data
+     * @return GridTable
      */
-    public function setSelectFilter(array $data)
+    public function setSelectFilter(array $data): self
     {
         $this->selectFilter = $data;
+
+        //TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
+        // tento vyber se taky posype do session pres externi callback volani!!!
+        return $this;
     }
 
 
@@ -445,20 +513,6 @@ class GridTable extends Control implements ITemplatePath
         $this->selectFilter[$column][$filter] = $state;
 
         $this->onSelectFilter($this->selectFilter);
-
-        // redraw snippet
-        $this->cleanCache();
-    }
-
-
-    /**
-     * Handle select paginator range.
-     *
-     * @param int $value
-     */
-    public function handleSelectPaginatorRange(int $value)
-    {
-        $this->onSelectPaginatorRange($value);
 
         // redraw snippet
         $this->cleanCache();
