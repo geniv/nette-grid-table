@@ -3,7 +3,6 @@
 namespace GridTable\Drivers;
 
 use ArrayObject;
-use Dibi\IDataSource;
 use Traversable;
 
 
@@ -22,7 +21,7 @@ class ApiDataSource implements IDataSource
     /** @var int */
     private $count, $limit = 0, $offset = 0;
     /** @var array */
-    private $order;
+    private $where = [], $order = [];
     /** @var ArrayObject */
     private $iterator;
 
@@ -69,9 +68,13 @@ class ApiDataSource implements IDataSource
      */
     public function getIterator(): Traversable
     {
+        if ($this->where) {
+            $this->limit = 999;  //TODO zpracovat lip?
+        }
+
         $this->loadData();
 
-        // if order set
+        // if set order
         if ($this->order) {
             $key = key($this->order);
             $direction = strtolower($this->order[$key]);
@@ -85,6 +88,33 @@ class ApiDataSource implements IDataSource
                 }
                 return 0;
             });
+        }
+
+        // if set where
+        if ($this->where) {
+//            bdump($this->where);
+            // transfer to array and filter correct value
+            $filter = array_filter((array) $this->iterator, function ($item) {
+                $state = false;
+                // compare OR logic
+                foreach ($this->where as $key => $where) {
+                    if (is_array($where)) {
+                        // compare array
+                        if (in_array($item[$key], $where)) {
+                            $state = true;
+                        }
+                    } else {
+                        // compare single value
+                        if ($item[$key] == $where) {
+                            $state = true;
+                        }
+                    }
+                }
+                return $state;
+            });
+            // transfer to back ArrayObject
+            $this->iterator = new ArrayObject($filter);
+            $this->count = $this->iterator->count();
         }
         return $this->iterator;
     }
@@ -143,6 +173,20 @@ class ApiDataSource implements IDataSource
     {
         $this->offset = $offset;
         $this->loadData();
+        return $this;
+    }
+
+
+    /**
+     * Where.
+     * Special version for API driver - always use OR!!!
+     *
+     * @param array $condition
+     * @return ApiDataSource
+     */
+    public function where(array $condition): self
+    {
+        $this->where = array_merge_recursive($this->where, $condition);
         return $this;
     }
 

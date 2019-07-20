@@ -10,7 +10,7 @@ $ composer require geniv/nette-grid-table
 ```
 or
 ```json
-"geniv/nette-grid-table": "^1.2"
+"geniv/nette-grid-table": "^1.3"
 ```
 
 require:
@@ -20,7 +20,6 @@ require:
 "nette/caching": ">=2.5",
 "nette/component-model": ">=2.3",
 "nette/utils": ">=2.4",
-"dibi/dibi": ">=3.0",
 "geniv/nette-general-form": ">=1.0"
 ```
 
@@ -38,46 +37,40 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 {
     $visualPaginator->setPathTemplate(__DIR__ . '/templates/visualPaginator.latte');
     $gridTable->setPaginator($visualPaginator->getPaginator(), $visualPaginator);
-    $gridTable->setItemPerPage($this->wrapperSection->getDatabaseLimit());
+    $gridTable->setItemPerPage($this->getDatabaseLimit());
 //    $gridTable->setPage((int) 4);
 //    $gridTable->setSortable(false);
 
     $gridTable->setTemplatePath(__DIR__ . '/templates/gridTable.latte');
-    $gridTable->setSource($this->wrapperSection->getSource());
+    $gridTable->setSource($this->getSource());
 //    $gridTable->setCacheId('123'.$neco);
 //    $gridTable->setSource(new ArrayDataSource($this->configureSection->getListSection()));
 //    $gridTable->setSource(new ApiDataSource(function ($limit, $offset) {
 //        return $this->apiModel->getListApi($limit, $offset);
 //    }, 'totalCount', 'result'));
 
-    $pk = $this->wrapperSection->getDatabasePk();
+    $pk = 'id';
     $gridTable->setPrimaryKey($pk);
-    $gridTable->setDefaultOrder($this->wrapperSection->getDatabaseOrderDefault());
-
-    $elements = $this->wrapperSection->getElements();
+    $gridTable->setDefaultOrder(['id' => 'asc']);
 
     $gridTable->addColumn($pk, '#');
 
-    $items = $this->wrapperSection->getItems();
-    foreach ($items as $idItem => $configure) {
-        $elem = $elements[$idItem]; // load element
-        $column = $gridTable->addColumn($idItem, $elem->getTranslateNameContent());
-        $column->setOrdering($configure['ordering']);
-        $column->setData($configure);
+    $column = $gridTable->addColumn('username', 'Jmeno');
+    $column->setOrdering(true);
+    $column->setData(['foo' => 'bar']);
 
 //        $column->setCallback(function ($data, Column $context) { return $data; });
-        $column->setCallback(function ($data, $context) use ($elem) { return $elem->getRenderRow($data); });
-        if ($configure['type'] == 'checkbox') {
-            $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
-        }
-    }
+    $column->setCallback(function ($data) { return $data; });
+   
+    $column = $gridTable->addColumn('username', 'Jmeno');
+    $column->setTemplatePath(__DIR__ . '/templates/gridTableCheckbox.latte');
 
     // edit
     $gridTable->addButton('content-grid-table-edit')
         ->setLink($this->presenterName . ':edit', ['idSection' => $this->idSection, 'id' => '%id', null])
         ->setClass('edit-class')
         ->setData(['svg' => self::SVG_USE_EDIT])
-        ->setPermission($this->idSection, WrapperSection::ACTION_EDIT);
+        ->setPermission($this->idSection, 'edit');
 //        ->setData($configure);
 
     // delete
@@ -85,7 +78,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
         ->setLink($this->presenterName . ':delete', ['idSection' => $this->idSection, 'id' => '%id'])
         ->setClass('btn btn-delete')
         ->setData(['svg' => self::SVG_USE_DELETE])
-        ->setPermission($this->idSection, WrapperSection::ACTION_DELETE)
+        ->setPermission($this->idSection, 'delete')
         ->setConfirm('content-grid-table-delete-confirm')
         ->setCallback(function (array $data, Button $context) { return $data; });
 
@@ -94,6 +87,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 ```
 
 ##### Drivers:
+- Dibi IDataSource instance (native)
 - ArrayDataSource(array $data)
 - FinderDataSource(Finder $finder)
 - ApiDataSource(callable $function($limit, $offset){ return ApiCall($limit, $offset); }, 'totalCount', 'result')
@@ -103,14 +97,23 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 cleanCache($name = 'grid')
 setTemplatePath(string $path)
 setSource(IDataSource $source): self
+setSourceLimit(int $limit, int $offset = 0): self
 setItemPerPage(int $itemPerPage, bool $exception = false)
 setPage(int $page, bool $exception = false)
-setPaginator(Paginator $paginator, IComponent $visualPaginator = null)
+setPaginator(IComponent $visualPaginator = null, callable $callback = null)
+setPaginatorRange(array $range)
 setSortable(bool $state): self
 setPrimaryKey(string $pk): self
 setDefaultOrder(array $order): self
+setSelection(array $action): self
+setSelectFilter(array $data)
 addButton(string $caption): Button
 addColumn(string $name, string $header = null): Column
+
+onSelectRow(array $array)
+onColumnOrder(string $column, string|null $direction)
+onSelectFilter(string $column, string $filter)
+onSelectPaginatorRange(int $value)
 ```
 
 ##### class Column
@@ -122,6 +125,7 @@ setTemplatePath(string $path, array $data = []): self
 setFormatDateTime(string $format): self
 setFormatBoolean(): self
 setFormatString(string $format): self
+setFilter(array $values): self
 ```
 
 ##### class Button
@@ -153,12 +157,12 @@ usage with `Multiplier`:
 public function createComponentGridTableMultiplier(GridTable $gridTable): Multiplier
 {
     return new Multiplier(function ($index) use ($gridTable) {
-            $gridTable = clone $gridTable;
+        $gridTable = clone $gridTable;
 
-            $source = clone $this->wrapperSection->getSource();
-            // ...
+        $source = clone $this->getSource();
+        // ...
 
-            return $gridTable;
-        });
-    }
+        return $gridTable;
+    });
+}
 ```

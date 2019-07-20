@@ -23,6 +23,7 @@ class Column implements ITemplatePath
     const
         NAME = 'name',
         HEADER = 'header',
+        FILTER = 'filter',
         ORDERING = 'ordering',
         ORDERING_STATE = 'state',
         ORDERING_NEXT_DIRECTION = 'next_direction',
@@ -99,13 +100,38 @@ class Column implements ITemplatePath
 
 
     /**
+     * Is filter.
+     *
+     * @return bool
+     */
+    public function isFilter(): bool
+    {
+        return (bool) ($this->configure[self::FILTER] ?? false);
+    }
+
+
+    /**
+     * Get filter.
+     *
+     * @return array
+     */
+    public function getFilter(): array
+    {
+        if (is_bool($this->configure[self::FILTER])) {
+            return [];  //TODO doresit jak bude potreba!
+        }
+        return ($this->configure[self::FILTER] ?? []);
+    }
+
+
+    /**
      * Is ordering.
      *
      * @return bool
      */
     public function isOrdering(): bool
     {
-        return $this->configure[self::ORDERING][self::ORDERING_STATE] ?? false;
+        return ($this->configure[self::ORDERING][self::ORDERING_STATE] ?? false);
     }
 
 
@@ -217,11 +243,12 @@ class Column implements ITemplatePath
 
     /**
      * Set format dateTime.
+     * Internal callback.
      *
      * @param string $format
      * @return Column
      */
-    public function setFormatDateTime(string $format): self
+    public function setFormatDateTime(string $format = 'Y-m-d H:i:s'): self
     {
         $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
             $value = $data[$context->getName()];
@@ -240,6 +267,7 @@ class Column implements ITemplatePath
 
     /**
      * Set format boolean.
+     * Internal callback.
      *
      * @return Column
      */
@@ -255,6 +283,7 @@ class Column implements ITemplatePath
 
     /**
      * Set format string.
+     * Internal callback.
      *
      * @param string $format
      * @return Column
@@ -289,9 +318,15 @@ class Column implements ITemplatePath
     }
 
 
-//    public function setSelect(bool $enable): self
-//    {
-//        //TODO selectovani radku podle hodnoty v selectu - filtrovani podle enum/select hodnot
-//        return $this;
-//    }
+    /**
+     * Set filter.
+     *
+     * @param array|null $values
+     * @return Column
+     */
+    public function setFilter(array $values = null): self
+    {
+        $this->configure[self::FILTER] = $values ?? true;
+        return $this;
+    }
 }
