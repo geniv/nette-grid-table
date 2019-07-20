@@ -21,7 +21,7 @@ class ApiDataSource implements IDataSource
     /** @var int */
     private $count, $limit = 0, $offset = 0;
     /** @var array */
-    private $where, $order;
+    private $where = [], $order = [];
     /** @var ArrayObject */
     private $iterator;
 
@@ -68,6 +68,10 @@ class ApiDataSource implements IDataSource
      */
     public function getIterator(): Traversable
     {
+        if ($this->where) {
+            $this->limit = 999;
+        }
+
         $this->loadData();
 
         // if set order
@@ -88,12 +92,26 @@ class ApiDataSource implements IDataSource
 
         // if set where
         if ($this->where) {
+//            bdump($this->where);
             // transfer to array and filter correct value
             $filter = array_filter((array) $this->iterator, function ($item) {
+                $state = false;
                 foreach ($this->where as $key => $where) {
-                    return $item[$key] == $where;
+                    if (is_array($where)) {
+                        // compare for array
+                        if (in_array($item[$key], $where)) {
+                            $state = true;
+                        }
+                    }
+
+                    // compare for single number
+                    if (is_numeric($where)) {
+                        if ($item[$key] == $where) {
+                            $state = true;
+                        }
+                    }
                 }
-                return true;
+                return $state;
             });
             // transfer to back ArrayObject
             $this->iterator = new ArrayObject($filter);
@@ -162,13 +180,14 @@ class ApiDataSource implements IDataSource
 
     /**
      * Where.
+     * Special version for API driver - always use OR!!!
      *
      * @param array $condition
      * @return ApiDataSource
      */
     public function where(array $condition): self
     {
-        $this->where = $condition;
+        $this->where = array_merge_recursive($this->where, $condition);
         return $this;
     }
 
