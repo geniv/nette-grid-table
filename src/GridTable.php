@@ -423,6 +423,17 @@ class GridTable extends Control implements ITemplatePath
 
 
     /**
+     * Set select filter.
+     *
+     * @param array $data
+     */
+    public function setSelectFilter(array $data)
+    {
+        $this->selectFilter = $data;
+    }
+
+
+    /**
      * Handle select filter.
      *
      * @param string $column
@@ -451,17 +462,6 @@ class GridTable extends Control implements ITemplatePath
 
         // redraw snippet
         $this->cleanCache();
-    }
-
-
-    /**
-     * Set select filter.
-     *
-     * @param array $data
-     */
-    public function setSelectFilter(array $data)
-    {
-        $this->selectFilter = $data;
     }
 
 
