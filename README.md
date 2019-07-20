@@ -98,17 +98,20 @@ cleanCache($name = 'grid')
 setTemplatePath(string $path)
 setSource(IDataSource $source): self
 setSourceLimit(int $limit, int $offset = 0): self
-setItemPerPage(int $itemPerPage, bool $exception = false)
+setItemPerPage(int $itemPerPage, bool $exception = false): self  - probably load data from session
 setPage(int $page, bool $exception = false)
-setPaginator(IComponent $visualPaginator = null, callable $callback = null)
-setPaginatorRange(array $range)
+setPaginator(IComponent $visualPaginator = null, callable $callback = null): self
+setPaginatorRange(array $range): self
 setSortable(bool $state): self
 isSortable(): bool
 setPrimaryKey(string $pk): self
 setDefaultOrder(array $order): self
-setSelection(bool $state): self
-isSelection():bool
-setSelectFilter(array $data)
+setSelection(array $action): self
+isSelection(): bool
+setSelectRow(array $data)   - load data from session
+setFilter(bool $state): self
+isFilter(): bool
+setSelectFilter(array $data): self  - load data from session
 addButton(string $caption): Button
 addColumn(string $name, string $header = null): Column
 
