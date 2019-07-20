@@ -454,6 +454,17 @@ class GridTable extends Control implements ITemplatePath
 
 
     /**
+     * Set select filter.
+     *
+     * @param array $data
+     */
+    public function setSelectFilter(array $data)
+    {
+        $this->selectFilter = $data;
+    }
+
+
+    /**
      * Get list.
      *
      * @return Traversable
@@ -503,7 +514,7 @@ class GridTable extends Control implements ITemplatePath
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION, []);
         $template->selectRow = $this->selectRow ?? [];
-        $template->selectFilter = $this->selectFilter ?? [];   //TODO aplikovat
+        $template->selectFilter = $this->selectFilter ?? [];
         $template->paginatorRange = $this->paginatorRange ?? [];
         $template->paginatorItemsPerPage = $this->paginator->getItemsPerPage() ?? 10;
 

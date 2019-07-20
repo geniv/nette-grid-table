@@ -88,12 +88,14 @@ class ApiDataSource implements IDataSource
 
         // if set where
         if ($this->where) {
+            // transfer to array and filter correct value
             $filter = array_filter((array) $this->iterator, function ($item) {
                 foreach ($this->where as $key => $where) {
                     return $item[$key] == $where;
                 }
                 return true;
             });
+            // transfer to back ArrayObject
             $this->iterator = new ArrayObject($filter);
             $this->count = $this->iterator->count();
         }
