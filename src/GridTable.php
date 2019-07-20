@@ -255,6 +255,20 @@ class GridTable extends Control implements ITemplatePath
 
 
     /**
+     * Handle select paginator range.
+     *
+     * @param int $value
+     */
+    public function handleSelectPaginatorRange(int $value)
+    {
+        $this->onSelectPaginatorRange($value);
+
+        // redraw snippet
+        $this->cleanCache();
+    }
+
+
+    /**
      * Set sortable.
      * Ajax sortable items.
      *
@@ -266,6 +280,17 @@ class GridTable extends Control implements ITemplatePath
         // disable pagination for all items
         $this->configure->setConfigure(self::CONFIGURE_SORTABLE, $state);
         return $this;
+    }
+
+
+    /**
+     * Is sortable.
+     *
+     * @return bool
+     */
+    public function isSortable(): bool
+    {
+        return (bool) $this->configure->getConfigure(self::CONFIGURE_SORTABLE, false);
     }
 
 
@@ -299,17 +324,25 @@ class GridTable extends Control implements ITemplatePath
      * Set selection.
      * Row selection.
      *
-     * @param array $action
+     * @param bool $state
      * @return GridTable
      */
-    public function setSelection(array $action): self
+    public function setSelection(bool $state): self
     {
-        //TODO musi chytat nejaky JS plugin ktery umozni nejakou grafiku - uvladani musi ukladat do session - ale venkovnim callbyckem a pro ovladani session protoze strankvoani!
-        // a pak podle vybranych chekboxu vyresit na jakou metodu se data predhodi!!!
-
-        $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
+        $this->configure->setConfigure(self::CONFIGURE_SELECTION, $state);
 
         return $this;
+    }
+
+
+    /**
+     * Is selection.
+     *
+     * @return bool
+     */
+    public function isSelection(): bool
+    {
+        return (bool) $this->configure->getConfigure(self::CONFIGURE_SELECTION, false);
     }
 
 
@@ -338,15 +371,12 @@ class GridTable extends Control implements ITemplatePath
         }
         $this->onSelectRow($this->selectRow);
 
+        //TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
+
         // redraw snippet
         $this->cleanCache();
     }
 
-//TODO doresti zobrazovani akci selekce
-//TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
-//TODO filtry!
-//TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
-// tento vyber se taky posype do session pres externi callback volani!!!
 
     /**
      * Handle selection row.
@@ -430,6 +460,9 @@ class GridTable extends Control implements ITemplatePath
     public function setSelectFilter(array $data)
     {
         $this->selectFilter = $data;
+
+        //TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
+        // tento vyber se taky posype do session pres externi callback volani!!!
     }
 
 
@@ -445,20 +478,6 @@ class GridTable extends Control implements ITemplatePath
         $this->selectFilter[$column][$filter] = $state;
 
         $this->onSelectFilter($this->selectFilter);
-
-        // redraw snippet
-        $this->cleanCache();
-    }
-
-
-    /**
-     * Handle select paginator range.
-     *
-     * @param int $value
-     */
-    public function handleSelectPaginatorRange(int $value)
-    {
-        $this->onSelectPaginatorRange($value);
 
         // redraw snippet
         $this->cleanCache();

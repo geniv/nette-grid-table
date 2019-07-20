@@ -103,9 +103,11 @@ setPage(int $page, bool $exception = false)
 setPaginator(IComponent $visualPaginator = null, callable $callback = null)
 setPaginatorRange(array $range)
 setSortable(bool $state): self
+isSortable(): bool
 setPrimaryKey(string $pk): self
 setDefaultOrder(array $order): self
-setSelection(array $action): self
+setSelection(bool $state): self
+isSelection():bool
 setSelectFilter(array $data)
 addButton(string $caption): Button
 addColumn(string $name, string $header = null): Column
