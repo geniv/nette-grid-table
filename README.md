@@ -125,6 +125,7 @@ onSelectPaginatorRange(int $value)
 ```php
 setOrdering(bool $ordering = true): self
 setData(array $data): self
+// internal variable: $column, $value, $data + custom over setData([])
 setCallback(callable $callback): self  -  function ($data, Column $context) { return $data[$context->getName()]; }
 setTemplatePath(string $path, array $data = []): self
 setFormatDateTime(string $format): self

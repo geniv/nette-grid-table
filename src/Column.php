@@ -184,6 +184,7 @@ class Column implements ITemplatePath
             /** @var stdClass $template */
             $template->column = $this;
             $template->value = $value;
+            $template->data = $data;
             foreach ($this->getData() ?? [] as $key => $val) {
                 $template->$key = $val;
             }
