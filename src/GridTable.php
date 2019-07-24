@@ -571,7 +571,7 @@ class GridTable extends Control implements ITemplatePath
         $template->selectRow = $this->selectRow ?? [];
         $template->selectFilter = $this->selectFilter ?? [];
         $template->paginatorRange = $this->paginatorRange ?? [];
-        $template->paginatorItemsPerPage = $this->paginator->getItemsPerPage() ?? 10;
+        $template->paginatorItemsPerPage = ($this->paginator ? $this->paginator->getItemsPerPage() : 10);
 
 
 //        $filter = [];
