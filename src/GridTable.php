@@ -2,7 +2,6 @@
 
 namespace GridTable;
 
-use Exception;
 use GeneralForm\ITemplatePath;
 use GridTable\Drivers\IDataSource;
 use Nette\Application\UI\Control;
@@ -187,7 +186,7 @@ class GridTable extends Control implements ITemplatePath
      * @param int  $itemPerPage
      * @param bool $exception
      * @return GridTable
-     * @throws Exception
+     * @throws GridTableException
      */
     public function setItemPerPage(int $itemPerPage, bool $exception = false): self
     {
@@ -195,7 +194,7 @@ class GridTable extends Control implements ITemplatePath
             $this->paginator->setItemsPerPage($itemPerPage);
         } else {
             if ($exception) {
-                throw new Exception('Visual paginator is not define!');
+                throw new GridTableException('Visual paginator is not define!');
             }
         }
         return $this;
@@ -207,7 +206,7 @@ class GridTable extends Control implements ITemplatePath
      *
      * @param int  $page
      * @param bool $exception
-     * @throws Exception
+     * @throws GridTableException
      */
     public function setPage(int $page, bool $exception = false)
     {
@@ -215,7 +214,7 @@ class GridTable extends Control implements ITemplatePath
             $this->paginator->setPage($page);
         } else {
             if ($exception) {
-                throw new Exception('Visual paginator is not define!');
+                throw new GridTableException('Visual paginator is not define!');
             }
         }
     }
@@ -545,14 +544,14 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Render.
      *
-     * @throws Exception
+     * @throws GridTableException
      */
     public function render()
     {
         $template = $this->getTemplate();
 
         if (!$this->source) {
-            throw new Exception('Source is not define!');
+            throw new GridTableException('Source is not define!');
         }
 
         // ordering
