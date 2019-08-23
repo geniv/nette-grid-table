@@ -89,6 +89,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 
 ##### Drivers:
 - Dibi IDataSource instance (native)
+- DibiDataSource($data)
 - ArrayDataSource(array $data)
 - FinderDataSource(Finder $finder)
 - ApiDataSource(callable $function($limit, $offset){ return ApiCall($limit, $offset); }, 'totalCount', 'result')
