@@ -52,6 +52,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
     $pk = 'id';
     $gridTable->setPrimaryKey($pk);
     $gridTable->setDefaultOrder(['id' => 'asc']);
+    $gridTable->setDefaultOrder(['name+0', 'id asc']);
 
     $gridTable->addColumn($pk, '#');
 
