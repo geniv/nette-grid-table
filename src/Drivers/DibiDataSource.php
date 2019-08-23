@@ -58,6 +58,45 @@ class DibiDataSource implements IDataSource
 
 
     /**
+     * Order by.
+     *
+     * @param array $order
+     * @return DibiDataSource
+     */
+    public function orderBy($order): self
+    {
+        $this->data->orderBy($order);
+        return $this;
+    }
+
+
+    /**
+     * Limit.
+     *
+     * @param int $limit
+     * @return DibiDataSource
+     */
+    public function limit(int $limit): self
+    {
+        $this->data->limit($limit);
+        return $this;
+    }
+
+
+    /**
+     * Offset.
+     *
+     * @param int $offset
+     * @return DibiDataSource
+     */
+    public function offset(int $offset): self
+    {
+        $this->data->offset($offset);
+        return $this;
+    }
+
+
+    /**
      * __toString.
      *
      * @return string
@@ -65,7 +104,7 @@ class DibiDataSource implements IDataSource
     public function __toString()
     {
         // for support (string)$this->source in getCacheId() method
-        return serialize($this->data);
+        return $this->data->__toString();
     }
 }
 
