@@ -52,6 +52,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
     $pk = 'id';
     $gridTable->setPrimaryKey($pk);
     $gridTable->setDefaultOrder(['id' => 'asc']);
+    $gridTable->setDefaultOrder(['name+0', 'id asc']);
 
     $gridTable->addColumn($pk, '#');
 
@@ -88,6 +89,7 @@ protected function createComponentGridTable(GridTable $gridTable, VisualPaginato
 
 ##### Drivers:
 - Dibi IDataSource instance (native)
+- DibiDataSource($data)
 - ArrayDataSource(array $data)
 - FinderDataSource(Finder $finder)
 - ApiDataSource(callable $function($limit, $offset){ return ApiCall($limit, $offset); }, 'totalCount', 'result')

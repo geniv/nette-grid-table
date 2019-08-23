@@ -78,6 +78,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Get configure.
      *
+     * @noinspection PhpUnused
      * @return Configure
      * @internal
      */
@@ -141,6 +142,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set source.
      *
+     * @noinspection PhpUnused
      * @param IDataSource $source
      * @return GridTable
      */
@@ -155,6 +157,7 @@ class GridTable extends Control implements ITemplatePath
      * Set source limit.
      * Default limit and offset for usage without paginator.
      *
+     * @noinspection PhpUnused
      * @param int $limit
      * @param int $offset
      * @return GridTable
@@ -170,6 +173,7 @@ class GridTable extends Control implements ITemplatePath
      * Set cache id.
      * Set additional custom cache id (because setSource can have external parameters)
      *
+     * @noinspection PhpUnused
      * @param string $cacheId
      * @return GridTable
      */
@@ -183,6 +187,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set item per page.
      *
+     * @noinspection PhpUnused
      * @param int  $itemPerPage
      * @param bool $exception
      * @return GridTable
@@ -204,6 +209,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set page.
      *
+     * @noinspection PhpUnused
      * @param int  $page
      * @param bool $exception
      * @throws GridTableException
@@ -223,6 +229,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set paginator.
      *
+     * @noinspection PhpUnused
      * @param IComponent|null $visualPaginator
      * @param callable|null   $callback
      * @return GridTable
@@ -250,6 +257,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set paginator range.
      *
+     * @noinspection PhpUnused
      * @param array $range
      * @return GridTable
      */
@@ -263,6 +271,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Handle select paginator range.
      *
+     * @noinspection PhpUnused
      * @param int $value
      */
     public function handleSelectPaginatorRange(int $value)
@@ -278,6 +287,7 @@ class GridTable extends Control implements ITemplatePath
      * Set sortable.
      * Ajax sortable items.
      *
+     * @noinspection PhpUnused
      * @param bool $state
      * @return GridTable
      */
@@ -292,6 +302,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Is sortable.
      *
+     * @noinspection PhpUnused
      * @return bool
      */
     public function isSortable(): bool
@@ -303,6 +314,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set primary key.
      *
+     * @noinspection PhpUnused
      * @param string $pk
      * @return GridTable
      */
@@ -316,6 +328,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Set default order.
      *
+     * @noinspection PhpUnused
      * @param array $order
      * @return GridTable
      */
@@ -330,8 +343,10 @@ class GridTable extends Control implements ITemplatePath
      * Set selection.
      * Turn on selection.
      *
+     * @noinspection PhpUnused
      * @param array $action
      * @return GridTable
+     * @deprecated
      */
     public function setSelection(array $action): self
     {
@@ -343,7 +358,9 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Is selection.
      *
+     * @noinspection PhpUnused
      * @return bool
+     * @deprecated
      */
     public function isSelection(): bool
     {
@@ -355,7 +372,9 @@ class GridTable extends Control implements ITemplatePath
      * Set select row.
      * Load data from session.
      *
+     * @noinspection PhpUnused
      * @param array $data
+     * @deprecated
      */
     public function setSelectRow(array $data)
     {
@@ -366,7 +385,9 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Handle selection all row.
      *
+     * @noinspection PhpUnused
      * @param bool $state
+     * @deprecated
      */
     public function handleSelectionAllRow(bool $state)
     {
@@ -387,8 +408,10 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Handle selection row.
      *
+     * @noinspection PhpUnused
      * @param int  $id
      * @param bool $state
+     * @deprecated
      */
     public function handleSelectionRow(int $id, bool $state)
     {
@@ -404,6 +427,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Add button.
      *
+     * @noinspection PhpUnused
      * @param string $caption
      * @return Button
      */
@@ -418,6 +442,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Add column.
      *
+     * @noinspection PhpUnused
      * @param string      $name
      * @param string|null $header
      * @return Column
@@ -433,6 +458,7 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Handle column order.
      *
+     * @noinspection PhpUnused
      * @param string      $column
      * @param string|null $direction
      */
@@ -462,8 +488,10 @@ class GridTable extends Control implements ITemplatePath
      * Set filter.
      * Turn on filter.
      *
+     * @noinspection PhpUnused
      * @param bool $state
      * @return GridTable
+     * @deprecated
      */
     public function setFilter(bool $state): self
     {
@@ -475,7 +503,9 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Is select filter.
      *
+     * @noinspection PhpUnused
      * @return bool
+     * @deprecated
      */
     public function isFilter(): bool
     {
@@ -487,8 +517,10 @@ class GridTable extends Control implements ITemplatePath
      * Set select filter.
      * Load data from session.
      *
+     * @noinspection PhpUnused
      * @param array $data
      * @return GridTable
+     * @deprecated
      */
     public function setSelectFilter(array $data): self
     {
@@ -503,9 +535,11 @@ class GridTable extends Control implements ITemplatePath
     /**
      * Handle select filter.
      *
+     * @noinspection PhpUnused
      * @param string $column
      * @param string $filter
      * @param bool   $state
+     * @deprecated
      */
     public function handleSelectFilter(string $column, string $filter, bool $state)
     {
@@ -557,8 +591,20 @@ class GridTable extends Control implements ITemplatePath
         // ordering
         $order = $this->configure->getConfigure(self::CONFIGURE_ORDER);
         if ($order) {
-            /* @noinspection PhpUndefinedMethodInspection */
-            $this->source->orderBy($order);
+            // search natural order
+            $natural = array_filter($order, function ($item) {
+                return (strpos($item, '+') !== false);
+            });
+
+            if ($natural) {
+                foreach ($order as $item) {
+                    /* @noinspection PhpUndefinedMethodInspection */
+                    $this->source->orderBy($item);
+                }
+            } else {
+                /* @noinspection PhpUndefinedMethodInspection */
+                $this->source->orderBy($order);
+            }
         }
 
         /** @var stdClass $template */
@@ -571,19 +617,6 @@ class GridTable extends Control implements ITemplatePath
         $template->selectFilter = $this->selectFilter ?? [];
         $template->paginatorRange = $this->paginatorRange ?? [];
         $template->paginatorItemsPerPage = ($this->paginator ? $this->paginator->getItemsPerPage() : 10);
-
-
-//        $filter = [];
-//        foreach ($template->list as $item) {
-//            foreach ($template->columns as $column) {
-////                dump($template->list);
-//                if ($column->isFilter()) {
-//                    $filter[$column->getName()][] = $item[$column->getName()];
-//                }
-//            }
-//        }
-//        dump($filter);
-
 
 //        dump($template->configure);
 //        dump($template->columns);
