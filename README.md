@@ -126,6 +126,7 @@ onSelectPaginatorRange(int $value)
 ##### class Column
 ```php
 setOrdering(bool $ordering = true): self
+setOrderingBy(string $column): self
 setData(array $data): self
 // internal variable: $column, $value, $data + custom over setData([])
 setCallback(callable $callback): self  -  function ($data, Column $context) { return $data[$context->getName()]; }
