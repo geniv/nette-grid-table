@@ -108,12 +108,12 @@ setSortable(bool $state): self
 isSortable(): bool
 setPrimaryKey(string $pk): self
 setDefaultOrder(array $order): self
-setSelection(array $action): self
-isSelection(): bool
-setSelectRow(array $data)   - load data from session
-setFilter(bool $state): self
-isFilter(): bool
-setSelectFilter(array $data): self  - load data from session
+//setSelection(array $action): self
+//isSelection(): bool
+//setSelectRow(array $data)   - load data from session
+//setFilter(bool $state): self
+//isFilter(): bool
+//setSelectFilter(array $data): self  - load data from session
 addButton(string $caption): Button
 addColumn(string $name, string $header = null): Column
 
@@ -133,7 +133,7 @@ setTemplatePath(string $path, array $data = []): self
 setFormatDateTime(string $format): self
 setFormatBoolean(): self
 setFormatString(string $format): self
-setFilter(array $values): self
+//setFilter(array $values): self
 ```
 
 ##### class Button

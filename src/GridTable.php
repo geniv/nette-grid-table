@@ -19,9 +19,7 @@ use Traversable;
  *
  * @author  geniv
  * @package GridTable
- * @method onSelectRow(array $array)
  * @method onColumnOrder(string $column, string|null $direction)
- * @method onSelectFilter(array $selectFilter)
  * @method onSelectPaginatorRange(int $value)
  */
 class GridTable extends Control implements ITemplatePath
@@ -30,8 +28,8 @@ class GridTable extends Control implements ITemplatePath
         CONFIGURE_PK = 'pk',
         CONFIGURE_ORDER = 'order',
         CONFIGURE_SORTABLE = 'sortable',
-        CONFIGURE_SELECTION = 'selection',
-        CONFIGURE_FILTER = 'filter',
+//        CONFIGURE_SELECTION = 'selection',
+//        CONFIGURE_FILTER = 'filter',
 
         COLUMN = 'column',
         ACTION = 'action';
@@ -51,9 +49,9 @@ class GridTable extends Control implements ITemplatePath
     /** @var Paginator */
     private $paginator = null;
     /** @var array */
-    private $paginatorRange = [], $selectRow = [], $selectFilter = [];
+    private $paginatorRange = []; //, $selectRow = []; //, $selectFilter = [];
     /** @var callable */
-    public $onColumnOrder, $onSelectRow, $onSelectFilter, $onSelectPaginatorRange;
+    public $onColumnOrder, $onSelectPaginatorRange;    ///*$onSelectRow, $onSelectFilter,*/
 
 
     /**
@@ -98,7 +96,7 @@ class GridTable extends Control implements ITemplatePath
     {
         // internal usage for inner-cache in latte
         $columnId = implode(array_keys($this->configure->getConfigure(self::COLUMN, [])));
-        $listId = serialize(trim((string) $this->source)) . serialize($this->selectRow);
+        $listId = serialize(trim((string) $this->source));// . serialize($this->selectRow);
         return $columnId . $listId . $this->cacheId;
     }
 
@@ -339,89 +337,89 @@ class GridTable extends Control implements ITemplatePath
     }
 
 
-    /**
-     * Set selection.
-     * Turn on selection.
-     *
-     * @noinspection PhpUnused
-     * @param array $action
-     * @return GridTable
-     * @deprecated
-     */
-    public function setSelection(array $action): self
-    {
-        $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
-        return $this;
-    }
+//    /**
+//     * Set selection.
+//     * Turn on selection.
+//     *
+//     * @noinspection PhpUnused
+//     * @param array $action
+//     * @return GridTable
+//     * @deprecated
+//     */
+//    public function setSelection(array $action): self
+//    {
+//        $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
+//        return $this;
+//    }
 
 
-    /**
-     * Is selection.
-     *
-     * @noinspection PhpUnused
-     * @return bool
-     * @deprecated
-     */
-    public function isSelection(): bool
-    {
-        return (bool) $this->configure->getConfigure(self::CONFIGURE_SELECTION, false);
-    }
+//    /**
+//     * Is selection.
+//     *
+//     * @noinspection PhpUnused
+//     * @return bool
+//     * @deprecated
+//     */
+//    public function isSelection(): bool
+//    {
+//        return (bool) $this->configure->getConfigure(self::CONFIGURE_SELECTION, false);
+//    }
 
 
-    /**
-     * Set select row.
-     * Load data from session.
-     *
-     * @noinspection PhpUnused
-     * @param array $data
-     * @deprecated
-     */
-    public function setSelectRow(array $data)
-    {
-        $this->selectRow = $data;
-    }
+//    /**
+//     * Set select row.
+//     * Load data from session.
+//     *
+//     * @noinspection PhpUnused
+//     * @param array $data
+//     * @deprecated
+//     */
+//    public function setSelectRow(array $data)
+//    {
+//        $this->selectRow = $data;
+//    }
 
 
-    /**
-     * Handle selection all row.
-     *
-     * @noinspection PhpUnused
-     * @param bool $state
-     * @deprecated
-     */
-    public function handleSelectionAllRow(bool $state)
-    {
-        $list = $this->getList();
-        $pk = $this->configure->getConfigure(self::CONFIGURE_PK);
-        foreach ($list as $item) {
-            $this->selectRow[$item[$pk]] = $state;
-        }
-        $this->onSelectRow($this->selectRow);
+//    /**
+//     * Handle selection all row.
+//     *
+//     * @noinspection PhpUnused
+//     * @param bool $state
+//     * @deprecated
+//     */
+//    public function handleSelectionAllRow(bool $state)
+//    {
+//        $list = $this->getList();
+//        $pk = $this->configure->getConfigure(self::CONFIGURE_PK);
+//        foreach ($list as $item) {
+//            $this->selectRow[$item[$pk]] = $state;
+//        }
+//        $this->onSelectRow($this->selectRow);
+//
+//        //TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
+//
+//        // redraw snippet
+//        $this->cleanCache();
+//    }
 
-        //TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
 
-        // redraw snippet
-        $this->cleanCache();
-    }
-
-
-    /**
-     * Handle selection row.
-     *
-     * @noinspection PhpUnused
-     * @param int  $id
-     * @param bool $state
-     * @deprecated
-     */
-    public function handleSelectionRow(int $id, bool $state)
-    {
-        $this->selectRow[$id] = $state;
-
-        $this->onSelectRow($this->selectRow);
-
-        // redraw snippet
-        $this->cleanCache();
-    }
+//    /**
+//     * Handle selection row.
+//     *
+//     * @noinspection PhpUnused
+//     * @param int  $id
+//     * @param bool $state
+//     * @deprecated
+//     */
+//    public function handleSelectionRow(int $id, bool $state)
+//    {
+//        $this->selectRow[$id] = $state;
+//
+//        $this->onSelectRow($this->selectRow);
+//
+//        // redraw snippet
+//        $this->cleanCache();
+//    }
 
 
     /**
@@ -484,72 +482,72 @@ class GridTable extends Control implements ITemplatePath
     }
 
 
-    /**
-     * Set filter.
-     * Turn on filter.
-     *
-     * @noinspection PhpUnused
-     * @param bool $state
-     * @return GridTable
-     * @deprecated
-     */
-    public function setFilter(bool $state): self
-    {
-        $this->configure->setConfigure(self::CONFIGURE_FILTER, $state);
-        return $this;
-    }
+//    /**
+//     * Set filter.
+//     * Turn on filter.
+//     *
+//     * @noinspection PhpUnused
+//     * @param bool $state
+//     * @return GridTable
+//     * @deprecated
+//     */
+//    public function setFilter(bool $state): self
+//    {
+//        $this->configure->setConfigure(self::CONFIGURE_FILTER, $state);
+//        return $this;
+//    }
 
 
-    /**
-     * Is select filter.
-     *
-     * @noinspection PhpUnused
-     * @return bool
-     * @deprecated
-     */
-    public function isFilter(): bool
-    {
-        return (bool) $this->configure->getConfigure(self::CONFIGURE_FILTER, false);
-    }
+//    /**
+//     * Is select filter.
+//     *
+//     * @noinspection PhpUnused
+//     * @return bool
+//     * @deprecated
+//     */
+//    public function isFilter(): bool
+//    {
+//        return (bool) $this->configure->getConfigure(self::CONFIGURE_FILTER, false);
+//    }
 
 
-    /**
-     * Set select filter.
-     * Load data from session.
-     *
-     * @noinspection PhpUnused
-     * @param array $data
-     * @return GridTable
-     * @deprecated
-     */
-    public function setSelectFilter(array $data): self
-    {
-        $this->selectFilter = $data;
+//    /**
+//     * Set select filter.
+//     * Load data from session.
+//     *
+//     * @noinspection PhpUnused
+//     * @param array $data
+//     * @return GridTable
+//     * @deprecated
+//     */
+//    public function setSelectFilter(array $data): self
+//    {
+//        $this->selectFilter = $data;
+//
+//        //TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
+//        // tento vyber se taky posype do session pres externi callback volani!!!
+//        return $this;
+//    }
 
-        //TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
-        // tento vyber se taky posype do session pres externi callback volani!!!
-        return $this;
-    }
 
-
-    /**
-     * Handle select filter.
-     *
-     * @noinspection PhpUnused
-     * @param string $column
-     * @param string $filter
-     * @param bool   $state
-     * @deprecated
-     */
-    public function handleSelectFilter(string $column, string $filter, bool $state)
-    {
-        $this->selectFilter[$column][$filter] = $state;
-
-        $this->onSelectFilter($this->selectFilter);
-
-        // redraw snippet
-        $this->cleanCache();
-    }
+//    /**
+//     * Handle select filter.
+//     *
+//     * @noinspection PhpUnused
+//     * @param string $column
+//     * @param string $filter
+//     * @param bool   $state
+//     * @deprecated
+//     */
+//    public function handleSelectFilter(string $column, string $filter, bool $state)
+//    {
+//        $this->selectFilter[$column][$filter] = $state;
+//
+//        $this->onSelectFilter($this->selectFilter);
+//
+//        // redraw snippet
+//        $this->cleanCache();
+//    }
 
 
     /**
@@ -613,8 +611,8 @@ class GridTable extends Control implements ITemplatePath
         $template->configure = $this->configure->getConfigures();
         $template->columns = $this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->configure->getConfigure(self::ACTION, []);
-        $template->selectRow = $this->selectRow ?? [];
-        $template->selectFilter = $this->selectFilter ?? [];
+//        $template->selectRow = $this->selectRow ?? [];
+//        $template->selectFilter = $this->selectFilter ?? [];
         $template->paginatorRange = $this->paginatorRange ?? [];
         $template->paginatorItemsPerPage = ($this->paginator ? $this->paginator->getItemsPerPage() : 10);
 

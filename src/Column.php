@@ -23,8 +23,9 @@ class Column implements ITemplatePath
     const
         NAME = 'name',
         HEADER = 'header',
-        FILTER = 'filter',
+//        FILTER = 'filter',
         ORDERING = 'ordering',
+        ORDERING_NAME = 'ordering',
         ORDERING_STATE = 'state',
         ORDERING_NEXT_DIRECTION = 'next_direction',
         ORDERING_CURRENT_DIRECTION = 'current_direction',
@@ -56,6 +57,7 @@ class Column implements ITemplatePath
     /**
      * Set order.
      *
+     * @noinspection PhpUnused
      * @param string|null $direction
      * @internal
      */
@@ -91,6 +93,7 @@ class Column implements ITemplatePath
     /**
      * Get caption.
      *
+     * @noinspection PhpUnused
      * @return string
      */
     public function getCaption(): string
@@ -99,29 +102,29 @@ class Column implements ITemplatePath
     }
 
 
-    /**
-     * Is filter.
-     *
-     * @return bool
-     */
-    public function isFilter(): bool
-    {
-        return (bool) ($this->configure[self::FILTER] ?? false);
-    }
+//    /**
+//     * Is filter.
+//     *
+//     * @return bool
+//     */
+//    public function isFilter(): bool
+//    {
+//        return (bool) ($this->configure[self::FILTER] ?? false);
+//    }
 
 
-    /**
-     * Get filter.
-     *
-     * @return array
-     */
-    public function getFilter(): array
-    {
-        if (is_bool($this->configure[self::FILTER])) {
-            return [];  //TODO doresit jak bude potreba!
-        }
-        return ($this->configure[self::FILTER] ?? []);
-    }
+//    /**
+//     * Get filter.
+//     *
+//     * @return array
+//     */
+//    public function getFilter(): array
+//    {
+//        if (is_bool($this->configure[self::FILTER])) {
+//            return [];  //TODO doresit jak bude potreba!
+//        }
+//        return ($this->configure[self::FILTER] ?? []);
+//    }
 
 
     /**
@@ -142,7 +145,7 @@ class Column implements ITemplatePath
      */
     public function getOrderHref(): array
     {
-        return [$this->configure[self::NAME], (isset($this->configure[self::ORDERING]) ? $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] : null)];
+        return [($this->configure[self::ORDERING_NAME] ?? $this->configure[self::NAME]), (isset($this->configure[self::ORDERING]) ? $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] : null)];
     }
 
 
@@ -210,6 +213,24 @@ class Column implements ITemplatePath
     {
         $this->configure[self::ORDERING] = [
             self::ORDERING_STATE          => $ordering,
+            self::ORDERING_NAME           => null,
+            self::ORDERING_NEXT_DIRECTION => 'ASC',
+        ];
+        return $this;
+    }
+
+
+    /**
+     * Set ordering by.
+     *
+     * @param string $column
+     * @return Column
+     */
+    public function setOrderingBy(string $column): self
+    {
+        $this->configure[self::ORDERING] = [
+            self::ORDERING_STATE          => true,
+            self::ORDERING_NAME           => $column,
             self::ORDERING_NEXT_DIRECTION => 'ASC',
         ];
         return $this;
@@ -319,15 +340,15 @@ class Column implements ITemplatePath
     }
 
 
-    /**
-     * Set filter.
-     *
-     * @param array|null $values
-     * @return Column
-     */
-    public function setFilter(array $values = null): self
-    {
-        $this->configure[self::FILTER] = $values ?? true;
-        return $this;
-    }
+//    /**
+//     * Set filter.
+//     *
+//     * @param array|null $values
+//     * @return Column
+//     */
+//    public function setFilter(array $values = null): self
+//    {
+//        $this->configure[self::FILTER] = $values ?? true;
+//        return $this;
+//    }
 }
