@@ -28,6 +28,7 @@ class GridTable extends Control implements ITemplatePath
         CONFIGURE_PK = 'pk',
         CONFIGURE_ORDER = 'order',
         CONFIGURE_SORTABLE = 'sortable',
+        GLOBAL_ORDER = 'global-order',
 //        CONFIGURE_SELECTION = 'selection',
 //        CONFIGURE_FILTER = 'filter',
 
