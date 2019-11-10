@@ -1,10 +1,9 @@
 <div n:snippet="grid" n:inner-cache="$cacheId.$presenter->name.$presenter->action, tags=>[grid]">
     <table border="1">
         <tr>
-            {*<td>#</td>*}
-            {*<td n:if="$control->isSelection()"><a n:href="SelectionAllRow! true" class="ajax">vse</a><a n:href="SelectionAllRow! false" class="ajax">nic</a></td>*}
             <th n:foreach="$columns as $name=>$item">
-                <a n:tag-if="$item->isOrdering()" n:href="ColumnOrder! (expand) $item->getOrderHref()" class="ajax order-{($item->getCurrentOrder()|lower)?:'none'}">
+                <a n:tag-if="$item->isOrdering()" n:href="ColumnOrder! (expand) $item->getOrderHref()"
+                        class="ajax order-{($item->getCurrentOrder()|lower)?:'none'}">
                     {_$item->getCaption()}
                     {*{$item->getData()}*}
                     <svg n:if="$item->isOrdering()" xmlns="http://www.w3.org/2000/svg" width="16" height="18">
@@ -14,23 +13,8 @@
             </th>
             <th n:if="$action">{_'grid-table#action'}</th>
         </tr>
-        {*<tr>
-            <td n:if="$control->isSelection()"></td>
-            {if $control->isFilter()}
-                <td n:foreach="$columns as $item">
-                    {if $item->isFilter()}
-                        {foreach $item->getFilter() as $filter}
-                            <a n:href="SelectFilter! $item->getName(), $filter, !($selectFilter[$item->getName()][$filter] ?? false)" class="ajax">{$filter} {$selectFilter[$item->getName()][$filter] ?? false ? 'active'}</a>
-                        {/foreach}
-                    {/if}
-                </td>
-                <td></td>
-            {/if}
-        </tr>*}
         <tr n:foreach="$list as $row">
             {var $id=$row[$configure['pk']]}
-            {*<td>{$id}</td>*}
-            {*<td><a n:href="SelectionRow! $id, !($selectRow[$id] ?? false)" class="ajax">X {$selectRow[$id] ?? false ? 'active'}</a></td>*}
             <td n:foreach="$columns as $item"{php $value=$item->getValue($row)} n:class="$item->getData('type')">
                 {if Nette\Utils\Strings::length($value)}{$value|noescape|trim|strip}{else}---{/if}
             </td>
@@ -48,10 +32,6 @@
             <td style="text-align: center" colspan="{count($columns)+2}">{_'grid-table#empty-text'}</td>
         </tr>
     </table>
-
-    {*{ifset $configure['selection']}
-        <a n:foreach="$configure['selection'] as $name => $link" n:if="array_filter($selectRow)" href="{plink $link $selectRow}" class="ajax">{$name}</a>
-    {/ifset}*}
 
     {ifset $control['visualPaginator']}
         {control visualPaginator}
