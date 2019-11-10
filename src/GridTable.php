@@ -59,7 +59,11 @@ class GridTable extends Control implements ITemplatePath
     /** @var array */
     private $paginatorRange = []; //, $selectRow = [], $selectFilter = [];
     /** @var callable */
-    public $onColumnOrder, $onSelectPaginatorRange;    ///*$onSelectRow, $onSelectFilter,*/
+    public
+        /** @noinspection PhpUnused */
+        $onColumnOrder,
+        /** @noinspection PhpUnused */
+        $onSelectPaginatorRange;    ///*$onSelectRow, $onSelectFilter,*/
 
 
     /**
@@ -433,6 +437,7 @@ class GridTable extends Control implements ITemplatePath
             }
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         return $this->source->getIterator(); // call getIterator() -- first (build data)
     }
 
@@ -473,7 +478,7 @@ class GridTable extends Control implements ITemplatePath
         $template->list = $this->getList();
         $template->cacheId = $this->getCacheId();   // for inner-cache; call __toString() -- second (use serialize build data)
         $template->pk = $this->columnPk;
-        $template->configure = $this->configure->getConfigures();
+//        $template->configure = $this->configure->getConfigures();
         $template->columns = $this->columns;//$this->configure->getConfigure(self::COLUMN, []);
         $template->action = $this->actions;//$this->configure->getConfigure(self::ACTION, []);
         $template->paginatorRange = $this->paginatorRange ?? [];

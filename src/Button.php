@@ -27,9 +27,11 @@ class Button
         HTML_CLASS = 'class',
         DATA = 'data',
         CALLBACK = 'callback';
-
+//FIXME predelat!!!!
     /** @var array */
     private $configure = [];
+
+    private $caption, $confirm, $link, $linkArguments, $linkUrl, $permissionResource, $permissionPrivilege, $htmlClass, $valueData, $valueCallback;
 
 
     /**

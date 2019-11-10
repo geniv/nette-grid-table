@@ -7,7 +7,6 @@ use GeneralForm\ITemplatePath;
 use Nette\SmartObject;
 use Nette\Utils\DateTime;
 use Nette\Utils\Html;
-use stdClass;
 
 
 /**
@@ -170,9 +169,11 @@ class Column implements ITemplatePath
         $value = (isset($this->valueCallback) ? call_user_func($this->valueCallback, $data, $this) : $data[$this->name]);
         if (isset($this->valueTemplate)) {
             $template = $this->gridTable->getTemplate();
-            /** @var stdClass $template */
+            /** @noinspection PhpUndefinedFieldInspection */
             $template->column = $this;
+            /** @noinspection PhpUndefinedFieldInspection */
             $template->value = $value;
+            /** @noinspection PhpUndefinedFieldInspection */
             $template->data = $data;
             foreach ($this->getData() ?? [] as $key => $val) {
                 $template->$key = $val;
