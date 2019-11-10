@@ -466,10 +466,6 @@ class GridTable extends Control implements ITemplatePath
     {
 //        \Tracy\Debugger::fireLog('handleColumnOrder:: ' . $column . '-' . $direction);
 
-
-//        bdump($this->orderConfigure->getColumn($column));
-
-
         // set next order direction
         $columns = $this->configure->getConfigure(self::COLUMN);
         if (isset($columns[$column])) {
@@ -479,7 +475,8 @@ class GridTable extends Control implements ITemplatePath
 
         // set default order
         if ($direction) {
-            $this->configure->setConfigure(self::CONFIGURE_ORDER, [$column => $direction]);
+            /** @noinspection PhpUndefinedMethodInspection */
+            $this->configure->setConfigure(self::CONFIGURE_ORDER, [($columns[$column]->getOrderColumn() ?? $column) => $direction]);
         }
 
         $this->onColumnOrder($column, $direction);

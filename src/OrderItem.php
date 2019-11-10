@@ -8,6 +8,7 @@ use Nette\SmartObject;
 /**
  * Class Order
  *
+ * @deprecated
  * @author  geniv
  * @package GridTable
  */
@@ -20,7 +21,7 @@ class OrderItem
     /** @var string */
     private $columnName = null, $name = null;
     /** @var string */
-    private $currentDirection = null, $nextDirection = null;
+    private $currentDirection = '', $nextDirection = '';
 
 
     /**

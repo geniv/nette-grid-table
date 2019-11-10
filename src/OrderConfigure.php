@@ -8,6 +8,7 @@ use Nette\SmartObject;
 /**
  * Class Order
  *
+ * @deprecated
  * @author  geniv
  * @package GridTable
  */
@@ -30,5 +31,16 @@ class OrderConfigure
             $this->data[$name] = new OrderItem($name);
         }
         return $this->data[$name];
+    }
+
+
+    //TODO default order!!
+
+    //TODO akceptace natura order!!
+
+
+    public function getOrder(): array
+    {
+        return [];
     }
 }
