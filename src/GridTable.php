@@ -28,7 +28,7 @@ class GridTable extends Control implements ITemplatePath
         CONFIGURE_PK = 'pk',
         CONFIGURE_ORDER = 'order',
         CONFIGURE_SORTABLE = 'sortable',
-        GLOBAL_ORDER = 'global-order',
+//        GLOBAL_ORDER = 'global-order',
 //        CONFIGURE_SELECTION = 'selection',
 //        CONFIGURE_FILTER = 'filter',
 
@@ -41,6 +41,8 @@ class GridTable extends Control implements ITemplatePath
     private $templatePath, $cacheId;
     /** @var Configure */
     private $configure;
+    /** @var OrderConfigure */
+    public $orderConfigure;
     /** @var IDataSource */
     private $source;
     /** @var array */
@@ -50,7 +52,7 @@ class GridTable extends Control implements ITemplatePath
     /** @var Paginator */
     private $paginator = null;
     /** @var array */
-    private $paginatorRange = []; //, $selectRow = []; //, $selectFilter = [];
+    private $paginatorRange = []; //, $selectRow = [], $selectFilter = [];
     /** @var callable */
     public $onColumnOrder, $onSelectPaginatorRange;    ///*$onSelectRow, $onSelectFilter,*/
 
@@ -68,6 +70,7 @@ class GridTable extends Control implements ITemplatePath
         $this->translator = $translator;
 
         $this->configure = new Configure();
+        $this->orderConfigure = new OrderConfigure();
         $this->cache = new Cache($storage, 'GridTable-GridTable');
 
         $this->templatePath = __DIR__ . '/GridTable.latte'; // path
@@ -397,8 +400,6 @@ class GridTable extends Control implements ITemplatePath
 //        }
 //        $this->onSelectRow($this->selectRow);
 //
-//        //TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
-//
 //        // redraw snippet
 //        $this->cleanCache();
 //    }
@@ -464,6 +465,11 @@ class GridTable extends Control implements ITemplatePath
     public function handleColumnOrder(string $column, string $direction = null)
     {
 //        \Tracy\Debugger::fireLog('handleColumnOrder:: ' . $column . '-' . $direction);
+
+
+//        bdump($this->orderConfigure->getColumn($column));
+
+
         // set next order direction
         $columns = $this->configure->getConfigure(self::COLUMN);
         if (isset($columns[$column])) {

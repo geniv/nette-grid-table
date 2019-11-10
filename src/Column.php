@@ -24,17 +24,16 @@ class Column implements ITemplatePath
         NAME = 'name',
         HEADER = 'header',
 //        FILTER = 'filter',
-        ORDERING = 'ordering',
-        ORDERING_NAME = 'ordering',
-        ORDERING_STATE = 'state',
-        ORDERING_NEXT_DIRECTION = 'next_direction',
-        ORDERING_CURRENT_DIRECTION = 'current_direction',
+//        ORDERING_NAME = 'ordering-name',
+//        ORDERING_STATE = 'ordering-state',
+//        ORDERING_NEXT_DIRECTION = 'ordering-next_direction',
+//        ORDERING_CURRENT_DIRECTION = 'ordering-current_direction',
         DATA = 'data',
         CALLBACK = 'callback',
         TEMPLATE = 'template';
 
     /** @var array */
-    private $configure = [], $globalConfigure = [];
+    private $configure = [];
     /** @var GridTable */
     private $gridTable;
 
@@ -49,7 +48,6 @@ class Column implements ITemplatePath
     public function __construct(GridTable $gridTable, string $name, string $header = null)
     {
         $this->gridTable = $gridTable;
-        $this->globalConfigure = $this->gridTable->getConfigure();
         $this->configure[self::NAME] = $name;
         $this->configure[self::HEADER] = $header;
     }
@@ -70,9 +68,12 @@ class Column implements ITemplatePath
             'DESC' => null,
         ];
 
-        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
-        $columns[$this->configure[self::NAME]][self::ORDERING_CURRENT_DIRECTION] = $direction;
-        $columns[$this->configure[self::NAME]][self::ORDERING_NEXT_DIRECTION] = $switchDirection[$direction];
+        $this->gridTable->orderConfigure->getColumn($this->configure[self::NAME])
+            ->setCurrentDirection($direction)
+            ->setNextDirection($switchDirection[$direction]);
+//        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
+//        $columns[$this->configure[self::NAME]][self::ORDERING_CURRENT_DIRECTION] = $direction;
+//        $columns[$this->configure[self::NAME]][self::ORDERING_NEXT_DIRECTION] = $switchDirection[$direction];
     }
 
 
@@ -123,7 +124,7 @@ class Column implements ITemplatePath
 //    public function getFilter(): array
 //    {
 //        if (is_bool($this->configure[self::FILTER])) {
-//            return [];  //TODO doresit jak bude potreba!
+//            return [];
 //        }
 //        return ($this->configure[self::FILTER] ?? []);
 //    }
@@ -136,8 +137,9 @@ class Column implements ITemplatePath
      */
     public function isOrdering(): bool
     {
-        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
-        return ($columns[$this->configure[self::NAME]][self::ORDERING_STATE] ?? false);
+        return $this->gridTable->orderConfigure->getColumn($this->configure[self::NAME])->getState();
+//        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
+//        return ($columns[$this->configure[self::NAME]][self::ORDERING_STATE] ?? false);
     }
 
 
@@ -148,8 +150,8 @@ class Column implements ITemplatePath
      */
     public function getOrderHref(): array
     {
-        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
-        return [$columns[$this->configure[self::NAME]][self::ORDERING_NAME], (isset($this->configure[self::ORDERING]) ? $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] : null)];
+        return $this->gridTable->orderConfigure->getColumn($this->configure[self::NAME])->getHref();
+//        return [$columns[$this->configure[self::NAME]][self::ORDERING_NAME], $columns[$this->configure[self::NAME]][self::ORDERING_NEXT_DIRECTION] ?? null];
     }
 
 
@@ -160,8 +162,9 @@ class Column implements ITemplatePath
      */
     public function getCurrentOrder(): string
     {
-        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
-        return $columns[$this->configure[self::NAME]][self::ORDERING_CURRENT_DIRECTION] ?? '';
+        return $this->gridTable->orderConfigure->getColumn($this->configure[self::NAME])->getCurrentDirection();
+//        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
+//        return $columns[$this->configure[self::NAME]][self::ORDERING_CURRENT_DIRECTION] ?? '';
     }
 
 
@@ -216,12 +219,17 @@ class Column implements ITemplatePath
      */
     public function setOrdering(bool $ordering = true): self
     {
-        $value = [
-            self::ORDERING_STATE          => $ordering,
-            self::ORDERING_NAME           => $this->configure[self::NAME],
-            self::ORDERING_NEXT_DIRECTION => 'ASC',
-        ];
-        $this->globalConfigure->addConfigure(GridTable::GLOBAL_ORDER, $this->configure[self::NAME], $value);
+        $this->gridTable->orderConfigure->getColumn($this->configure[self::NAME])
+            ->setState($ordering)
+            ->setName($this->configure[self::NAME])
+            ->setNextDirection('ASC');
+
+//        $value = [
+//            self::ORDERING_STATE          => $ordering,
+//            self::ORDERING_NAME           => $this->configure[self::NAME],
+//            self::ORDERING_NEXT_DIRECTION => 'ASC',
+//        ];
+//        $this->globalConfigure->addConfigure(GridTable::GLOBAL_ORDER, $this->configure[self::NAME], $value);
         return $this;
     }
 
@@ -234,12 +242,17 @@ class Column implements ITemplatePath
      */
     public function setOrderingBy(string $column): self
     {
-        $value = [
-            self::ORDERING_STATE          => true,
-            self::ORDERING_NAME           => $column,
-            self::ORDERING_NEXT_DIRECTION => 'ASC',
-        ];
-        $this->globalConfigure->addConfigure(GridTable::GLOBAL_ORDER, $this->configure[self::NAME], $value);
+        $this->gridTable->orderConfigure->getColumn($this->configure[self::NAME])
+            ->setState(true)
+            ->setName($column)
+            ->setNextDirection('ASC');
+
+//        $value = [
+//            self::ORDERING_STATE          => true,
+//            self::ORDERING_NAME           => $column,
+//            self::ORDERING_NEXT_DIRECTION => 'ASC',
+//        ];
+//        $this->globalConfigure->addConfigure(GridTable::GLOBAL_ORDER, $this->configure[self::NAME], $value);
         return $this;
     }
 
