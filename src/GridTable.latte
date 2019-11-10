@@ -14,7 +14,7 @@
             <th n:if="$action">{_'grid-table#action'}</th>
         </tr>
         <tr n:foreach="$list as $row">
-            {var $id=$row[$configure['pk']]}
+            {var $id=$row[$pk]}
             <td n:foreach="$columns as $item"{php $value=$item->getValue($row)} n:class="$item->getData('type')">
                 {if Nette\Utils\Strings::length($value)}{$value|noescape|trim|strip}{else}---{/if}
             </td>

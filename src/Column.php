@@ -72,6 +72,7 @@ class Column implements ITemplatePath
     /**
      * Get order column.
      *
+     * @noinspection PhpUnused
      * @return string
      * @internal
      */
@@ -111,6 +112,7 @@ class Column implements ITemplatePath
     /**
      * Is ordering.
      *
+     * @noinspection PhpUnused
      * @return bool
      */
     public function isOrdering(): bool
@@ -122,6 +124,7 @@ class Column implements ITemplatePath
     /**
      * Get order href.
      *
+     * @noinspection PhpUnused
      * @return array
      */
     public function getOrderHref(): array
@@ -133,6 +136,7 @@ class Column implements ITemplatePath
     /**
      * Get current order.
      *
+     * @noinspection PhpUnused
      * @return string
      */
     public function getCurrentOrder(): string
@@ -157,12 +161,13 @@ class Column implements ITemplatePath
     /**
      * Get value.
      *
+     * @noinspection PhpUnused
      * @param $data
      * @return string
      */
     public function getValue($data): string
     {
-        $value = (isset($this->valueCallback) ? $this->valueCallback($data, $this) : $data[$this->name]);
+        $value = (isset($this->valueCallback) ? call_user_func($this->valueCallback, $data, $this) : $data[$this->name]);
         if (isset($this->valueTemplate)) {
             $template = $this->gridTable->getTemplate();
             /** @var stdClass $template */
@@ -187,6 +192,7 @@ class Column implements ITemplatePath
     /**
      * Set ordering.
      *
+     * @noinspection PhpUnused
      * @param bool $state
      * @return Column
      */
@@ -201,6 +207,7 @@ class Column implements ITemplatePath
     /**
      * Set ordering by.
      *
+     * @noinspection PhpUnused
      * @param string $column
      * @return Column
      */
@@ -228,6 +235,7 @@ class Column implements ITemplatePath
     /**
      * Set callback.
      *
+     * @noinspection PhpUnused
      * @param callable $callback
      * @return Column
      */
@@ -242,6 +250,7 @@ class Column implements ITemplatePath
      * Set format dateTime.
      * Internal callback.
      *
+     * @noinspection PhpUnused
      * @param string $format
      * @return Column
      */
@@ -266,6 +275,7 @@ class Column implements ITemplatePath
      * Set format boolean.
      * Internal callback.
      *
+     * @noinspection PhpUnused
      * @return Column
      */
     public function setFormatBoolean(): self
@@ -282,6 +292,7 @@ class Column implements ITemplatePath
      * Set format string.
      * Internal callback.
      *
+     * @noinspection PhpUnused
      * @param string $format
      * @return Column
      */

@@ -24,24 +24,31 @@ use Traversable;
  */
 class GridTable extends Control implements ITemplatePath
 {
-    const
-        CONFIGURE_PK = 'pk',
-        CONFIGURE_ORDER = 'order',
-        CONFIGURE_SORTABLE = 'sortable',
+//    const
+//        CONFIGURE_PK = 'pk'
+//        CONFIGURE_ORDER = 'order',
+//        CONFIGURE_SORTABLE = 'sortable'
 //        GLOBAL_ORDER = 'global-order',
 //        CONFIGURE_SELECTION = 'selection',
 //        CONFIGURE_FILTER = 'filter',
+//        COLUMN = 'column',
+//        ACTION = 'action'
+//    ;
 
-        COLUMN = 'column',
-        ACTION = 'action';
+    private $columns = [];
+    private $actions = [];
 
     /** @var ITranslator */
     private $translator = null;
     /** @var string */
     private $templatePath, $cacheId;
-    /** @var Configure */
-    private $configure;
+//    /** @var Configure */
+//    private $configure;
     /** @var IDataSource */
+
+    private $columnPk;
+    private $sortable = false;
+    private $orderDefault = [];
     private $source;
     /** @var array */
     private $sourceLimit;
@@ -67,24 +74,24 @@ class GridTable extends Control implements ITemplatePath
 
         $this->translator = $translator;
 
-        $this->configure = new Configure();
+//        $this->configure = new Configure();
         $this->cache = new Cache($storage, 'GridTable-GridTable');
 
         $this->templatePath = __DIR__ . '/GridTable.latte'; // path
     }
 
 
-    /**
-     * Get configure.
-     *
-     * @noinspection PhpUnused
-     * @return Configure
-     * @internal
-     */
-    public function getConfigure(): Configure
-    {
-        return $this->configure;
-    }
+//    /**
+//     * Get configure.
+//     *
+//     * @noinspection PhpUnused
+//     * @return Configure
+//     * @internal
+//     */
+//    public function getConfigure(): Configure
+//    {
+//        return $this->configure;
+//    }
 
 
     /**
@@ -96,7 +103,8 @@ class GridTable extends Control implements ITemplatePath
     private function getCacheId()
     {
         // internal usage for inner-cache in latte
-        $columnId = implode(array_keys($this->configure->getConfigure(self::COLUMN, [])));
+//        $columnId = implode(array_keys($this->configure->getConfigure(self::COLUMN, [])));
+        $columnId = implode(array_keys($this->columns));
         $listId = serialize(trim((string) $this->source));// . serialize($this->selectRow);
         return $columnId . $listId . $this->cacheId;
     }
@@ -236,7 +244,7 @@ class GridTable extends Control implements ITemplatePath
     public function setPaginator(IComponent $visualPaginator = null, callable $callback = null): self
     {
         // disable pagination for sortable
-        if (!$this->configure->getConfigure(self::CONFIGURE_SORTABLE, false)) {
+        if (!$this->sortable) {
             if (!$callback) {
                 // default paginator component usage VisualPaginator
                 /* @noinspection PhpUndefinedMethodInspection */
@@ -293,7 +301,8 @@ class GridTable extends Control implements ITemplatePath
     public function setSortable(bool $state): self
     {
         // disable pagination for all items
-        $this->configure->setConfigure(self::CONFIGURE_SORTABLE, $state);
+        $this->sortable = $state;
+//        $this->configure->setConfigure(self::CONFIGURE_SORTABLE, $state);
         return $this;
     }
 
@@ -306,7 +315,7 @@ class GridTable extends Control implements ITemplatePath
      */
     public function isSortable(): bool
     {
-        return (bool) $this->configure->getConfigure(self::CONFIGURE_SORTABLE, false);
+        return $this->sortable;//$this->configure->getConfigure(self::CONFIGURE_SORTABLE, false);
     }
 
 
@@ -319,7 +328,8 @@ class GridTable extends Control implements ITemplatePath
      */
     public function setPrimaryKey(string $pk): self
     {
-        $this->configure->setConfigure(self::CONFIGURE_PK, $pk);
+        $this->columnPk = $pk;
+//        $this->configure->setConfigure(self::CONFIGURE_PK, $pk);
         return $this;
     }
 
@@ -333,7 +343,8 @@ class GridTable extends Control implements ITemplatePath
      */
     public function setDefaultOrder(array $order): self
     {
-        $this->configure->setConfigure(self::CONFIGURE_ORDER, $order);
+        $this->orderDefault = $order;
+//        $this->configure->setConfigure(self::CONFIGURE_ORDER, $order);
         return $this;
     }
 
@@ -348,7 +359,8 @@ class GridTable extends Control implements ITemplatePath
     public function addButton(string $caption): Button
     {
         $button = new Button($caption);
-        $this->configure->addConfigure(self::ACTION, $caption, $button);
+        $this->actions[$caption] = $button;
+//        $this->configure->addConfigure(self::ACTION, $caption, $button);
         return $button;
     }
 
@@ -364,7 +376,8 @@ class GridTable extends Control implements ITemplatePath
     public function addColumn(string $name, string $header = null): Column
     {
         $column = new Column($this, $name, $header);
-        $this->configure->addConfigure(self::COLUMN, $name, $column);
+//        $this->configure->addConfigure(self::COLUMN, $name, $column);
+        $this->columns[$name] = $column;
         return $column;
     }
 
@@ -381,16 +394,17 @@ class GridTable extends Control implements ITemplatePath
 //        \Tracy\Debugger::fireLog('handleColumnOrder:: ' . $column . '-' . $direction);
 
         // set next order direction
-        $columns = $this->configure->getConfigure(self::COLUMN);
+        $columns = $this->columns;//$this->configure->getConfigure(self::COLUMN);
         if (isset($columns[$column])) {
             /* @noinspection PhpUndefinedMethodInspection */
             $columns[$column]->setOrder($direction);
         }
 
-        // set default order
+        // rewrite default order
         if ($direction) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $this->configure->setConfigure(self::CONFIGURE_ORDER, [($columns[$column]->getOrderColumn() ?? $column) => $direction]);
+            $this->orderDefault = [($columns[$column]->getOrderColumn() ?? $column) => $direction];
+//            $this->configure->setConfigure(self::CONFIGURE_ORDER, [($columns[$column]->getOrderColumn() ?? $column) => $direction]);
         }
 
         $this->onColumnOrder($column, $direction);
@@ -437,7 +451,7 @@ class GridTable extends Control implements ITemplatePath
         }
 
         // ordering
-        $order = $this->configure->getConfigure(self::CONFIGURE_ORDER);
+        $order = $this->orderDefault;//$this->configure->getConfigure(self::CONFIGURE_ORDER);
         if ($order) {
             // search natural order
             $natural = array_filter($order, function ($item) {
@@ -458,9 +472,10 @@ class GridTable extends Control implements ITemplatePath
         /** @var stdClass $template */
         $template->list = $this->getList();
         $template->cacheId = $this->getCacheId();   // for inner-cache; call __toString() -- second (use serialize build data)
+        $template->pk = $this->columnPk;
         $template->configure = $this->configure->getConfigures();
-        $template->columns = $this->configure->getConfigure(self::COLUMN, []);
-        $template->action = $this->configure->getConfigure(self::ACTION, []);
+        $template->columns = $this->columns;//$this->configure->getConfigure(self::COLUMN, []);
+        $template->action = $this->actions;//$this->configure->getConfigure(self::ACTION, []);
         $template->paginatorRange = $this->paginatorRange ?? [];
         $template->paginatorItemsPerPage = ($this->paginator ? $this->paginator->getItemsPerPage() : 10);
 

@@ -8,6 +8,7 @@ use Nette\SmartObject;
 /**
  * Class Configure
  *
+ * @deprecated
  * @author  geniv
  * @package GridTable
  */
