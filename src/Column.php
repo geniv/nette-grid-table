@@ -20,25 +20,16 @@ class Column implements ITemplatePath
 {
     use SmartObject;
 
-    const
-//        NAME = 'name',
-//        HEADER = 'header',
-//        FILTER = 'filter',
-//        ORDERING_NAME = 'ordering-name',
-//        ORDERING_STATE = 'ordering-state',
-//        ORDERING_NEXT_DIRECTION = 'ordering-next_direction',
-//        ORDERING_CURRENT_DIRECTION = 'ordering-current_direction',
-        DATA = 'data',
-        CALLBACK = 'callback',
-        TEMPLATE = 'template';
-
     /** @var string */
     private $name, $header, $orderColumn, $orderCurrentDirection = '', $orderNextDirection = 'ASC';
     /** @var bool */
     private $orderState = false;
 
-    /** @var array */
-    private $configure = [];
+    private $valueData;
+    /** @var callable */
+    private $valueCallback;
+    /** @var string */
+    private $valueTemplate;
     /** @var GridTable */
     private $gridTable;
 
@@ -75,13 +66,6 @@ class Column implements ITemplatePath
 
         $this->orderCurrentDirection = $direction;
         $this->orderNextDirection = $switchDirection[$direction];
-
-//        $this->gridTable->orderConfigure->getColumn($this->name)
-//            ->setCurrentDirection($direction)
-//            ->setNextDirection($switchDirection[$direction]);
-//        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
-//        $columns[$this->name][self::ORDERING_CURRENT_DIRECTION] = $direction;
-//        $columns[$this->name][self::ORDERING_NEXT_DIRECTION] = $switchDirection[$direction];
     }
 
 
@@ -124,31 +108,6 @@ class Column implements ITemplatePath
     }
 
 
-//    /**
-//     * Is filter.
-//     *
-//     * @return bool
-//     */
-//    public function isFilter(): bool
-//    {
-//        return (bool) ($this->configure[self::FILTER] ?? false);
-//    }
-
-
-//    /**
-//     * Get filter.
-//     *
-//     * @return array
-//     */
-//    public function getFilter(): array
-//    {
-//        if (is_bool($this->configure[self::FILTER])) {
-//            return [];
-//        }
-//        return ($this->configure[self::FILTER] ?? []);
-//    }
-
-
     /**
      * Is ordering.
      *
@@ -157,8 +116,6 @@ class Column implements ITemplatePath
     public function isOrdering(): bool
     {
         return $this->orderState;
-//        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
-//        return ($columns[$this->name][self::ORDERING_STATE] ?? false);
     }
 
 
@@ -170,8 +127,6 @@ class Column implements ITemplatePath
     public function getOrderHref(): array
     {
         return [$this->name, $this->orderNextDirection];
-//        return $this->gridTable->orderConfigure->getColumn($this->name)->getHref();
-//        return [$columns[$this->name][self::ORDERING_NAME], $columns[$this->name][self::ORDERING_NEXT_DIRECTION] ?? null];
     }
 
 
@@ -182,10 +137,7 @@ class Column implements ITemplatePath
      */
     public function getCurrentOrder(): string
     {
-        return $this->orderCurrentDirection;
-//        return $this->gridTable->orderConfigure->getColumn($this->name)->getCurrentDirection();
-//        $columns = $this->globalConfigure->getConfigure(GridTable::GLOBAL_ORDER);
-//        return $columns[$this->name][self::ORDERING_CURRENT_DIRECTION] ?? '';
+        return $this->orderCurrentDirection ?? '';
     }
 
 
@@ -197,7 +149,7 @@ class Column implements ITemplatePath
      */
     public function getData(string $index = null)
     {
-        $data = $this->configure[self::DATA] ?? null;
+        $data = $this->valueData ?? null;
         return ($index ? ($data[$index] ?? null) : $data);
     }
 
@@ -210,8 +162,8 @@ class Column implements ITemplatePath
      */
     public function getValue($data): string
     {
-        $value = (isset($this->configure[self::CALLBACK]) ? $this->configure[self::CALLBACK]($data, $this) : $data[$this->name]);
-        if (isset($this->configure[self::TEMPLATE])) {
+        $value = (isset($this->valueCallback) ? $this->valueCallback($data, $this) : $data[$this->name]);
+        if (isset($this->valueTemplate)) {
             $template = $this->gridTable->getTemplate();
             /** @var stdClass $template */
             $template->column = $this;
@@ -220,7 +172,7 @@ class Column implements ITemplatePath
             foreach ($this->getData() ?? [] as $key => $val) {
                 $template->$key = $val;
             }
-            $template->setFile($this->configure[self::TEMPLATE]);
+            $template->setFile($this->valueTemplate);
             return (string) $template;
         }
         return (string) $value;
@@ -242,17 +194,6 @@ class Column implements ITemplatePath
     {
         $this->orderState = $state;
         $this->orderColumn = $this->name;
-
-//        $this->gridTable->orderConfigure->getColumn($this->name)
-//            ->setState($ordering)
-//            ->setName($this->name)
-//            ->setNextDirection('ASC');
-//        $value = [
-//            self::ORDERING_STATE          => $ordering,
-//            self::ORDERING_NAME           => $this->name,
-//            self::ORDERING_NEXT_DIRECTION => 'ASC',
-//        ];
-//        $this->globalConfigure->addConfigure(GridTable::GLOBAL_ORDER, $this->name, $value);
         return $this;
     }
 
@@ -267,17 +208,6 @@ class Column implements ITemplatePath
     {
         $this->orderState = true;
         $this->orderColumn = $column;
-
-//        $this->gridTable->orderConfigure->getColumn($this->name)
-//            ->setState(true)
-//            ->setName($column)
-//            ->setNextDirection('ASC');
-//        $value = [
-//            self::ORDERING_STATE          => true,
-//            self::ORDERING_NAME           => $column,
-//            self::ORDERING_NEXT_DIRECTION => 'ASC',
-//        ];
-//        $this->globalConfigure->addConfigure(GridTable::GLOBAL_ORDER, $this->name, $value);
         return $this;
     }
 
@@ -290,7 +220,7 @@ class Column implements ITemplatePath
      */
     public function setData(array $data): self
     {
-        $this->configure[self::DATA] = $data;
+        $this->valueData = $data;
         return $this;
     }
 
@@ -303,7 +233,7 @@ class Column implements ITemplatePath
      */
     public function setCallback(callable $callback): self
     {
-        $this->configure[self::CALLBACK] = $callback;
+        $this->valueCallback = $callback;
         return $this;
     }
 
@@ -317,7 +247,7 @@ class Column implements ITemplatePath
      */
     public function setFormatDateTime(string $format = 'Y-m-d H:i:s'): self
     {
-        $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
+        $this->valueCallback = function ($data, Column $context) use ($format) {
             $value = $data[$context->getName()];
             if ($value) {
                 if ($value instanceof DateInterval) {
@@ -340,7 +270,7 @@ class Column implements ITemplatePath
      */
     public function setFormatBoolean(): self
     {
-        $this->configure[self::CALLBACK] = function ($data, Column $context) {
+        $this->valueCallback = function ($data, Column $context) {
             $value = (bool) $data[$context->getName()];
             return Html::el('input', ['type' => 'checkbox', 'disabled' => true, 'checked' => $value]);
         };
@@ -357,7 +287,7 @@ class Column implements ITemplatePath
      */
     public function setFormatString(string $format): self
     {
-        $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
+        $this->valueCallback = function ($data, Column $context) use ($format) {
             $value = $data[$context->getName()];
             if ($value) {
                 return sprintf($format, $value);
@@ -377,23 +307,10 @@ class Column implements ITemplatePath
      */
     public function setTemplatePath(string $path, array $data = []): self
     {
-        $this->configure[self::TEMPLATE] = $path;
+        $this->valueTemplate = $path;
         if ($data) {
-            $this->setData(array_merge($this->configure[self::DATA] ?? [], $data));
+            $this->setData(array_merge($this->valueData ?? [], $data));
         }
         return $this;
     }
-
-
-//    /**
-//     * Set filter.
-//     *
-//     * @param array|null $values
-//     * @return Column
-//     */
-//    public function setFilter(array $values = null): self
-//    {
-//        $this->configure[self::FILTER] = $values ?? true;
-//        return $this;
-//    }
 }
