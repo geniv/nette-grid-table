@@ -10,7 +10,7 @@ $ composer require geniv/nette-grid-table
 ```
 or
 ```json
-"geniv/nette-grid-table": "^1.3"
+"geniv/nette-grid-table": "^1.4"
 ```
 
 require:
