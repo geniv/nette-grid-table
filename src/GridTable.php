@@ -407,7 +407,7 @@ class GridTable extends Control implements ITemplatePath
         // rewrite default order
         if ($direction) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $this->orderDefault = [($columns[$column]->getOrderColumn() ?? $column) => $direction];
+            $this->orderDefault = [$columns[$column]->getOrderColumn() => $direction];
 //            $this->configure->setConfigure(self::CONFIGURE_ORDER, [($columns[$column]->getOrderColumn() ?? $column) => $direction]);
         }
 
