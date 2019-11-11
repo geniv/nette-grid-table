@@ -5,7 +5,6 @@ namespace GridTable;
 use Nette\Application\IPresenter;
 use Nette\SmartObject;
 
-
 /**
  * Class Button
  *
@@ -16,23 +15,14 @@ class Button
 {
     use SmartObject;
 
-    const
-        CAPTION = 'caption',
-        CONFIRM = 'confirm',
-        LINK = 'link',
-        LINK_ARGUMENTS = 'link-arguments',
-        LINK_URL = 'link-url',
-        PERMISSION_RESOURCE = 'permission_resource',
-        PERMISSION_PRIVILEGE = 'permission_privilege',
-        HTML_CLASS = 'class',
-        DATA = 'data',
-        CALLBACK = 'callback';
-//FIXME predelat!!!!
+    /** @var string */
+    private $caption, $confirm, $link, $permissionResource, $permissionPrivilege, $valueHtmlClass;
+
     /** @var array */
-    private $configure = [];
+    private $linkArguments, $linkUrl, $valueData;
 
-    private $caption, $confirm, $link, $linkArguments, $linkUrl, $permissionResource, $permissionPrivilege, $htmlClass, $valueData, $valueCallback;
-
+    /** @var callable */
+    private $valueCallback;
 
     /**
      * Button constructor.
@@ -41,14 +31,13 @@ class Button
      */
     public function __construct(string $caption)
     {
-        $this->configure[self::CAPTION] = $caption;
+        $this->caption = $caption;
     }
-
+//TODO reformat!!
 
     /*
      * LATTE
      */
-
 
     /**
      * Is allowed.
@@ -59,13 +48,12 @@ class Button
     public function isAllowed(IPresenter $presenter): bool
     {
         // use user acl
-        if (isset($this->configure[self::PERMISSION_RESOURCE]) && isset($this->configure[self::PERMISSION_PRIVILEGE])) {
+        if (isset($this->permissionResource) && isset($this->permissionPrivilege)) {
             /* @noinspection PhpUndefinedMethodInspection */
-            return $presenter->getUser()->isAllowed($this->configure[self::PERMISSION_RESOURCE], $this->configure[self::PERMISSION_PRIVILEGE]);
+            return $presenter->getUser()->isAllowed($this->permissionResource, $this->permissionPrivilege);
         }
         return true;
     }
-
 
     /**
      * Get href.
@@ -85,10 +73,10 @@ class Button
         }, 'request');
 
         // merge data and request data
-        $data = array_merge((array) $data, $requestData);
+        $data = array_merge((array)$data, $requestData);
         // call callback
-        if (isset($this->configure[self::CALLBACK])) {
-            $data = $this->configure[self::CALLBACK]($data, $this);
+        if (isset($this->valueCallback)) {
+            $data = call_user_func($this->valueCallback, $data, $this);
         }
         $arr = array_map(function ($row) use ($data) {
             if ($row && $row[0] == '%') {
@@ -101,15 +89,14 @@ class Button
                 }
             }
             return $row;
-        }, $this->configure[self::LINK_ARGUMENTS]);
+        }, $this->linkArguments);
         // merge url after substitute
-        if (isset($this->configure[self::LINK_URL])) {
-            $arr = array_merge($arr, $this->configure[self::LINK_URL]);
+        if (isset($this->linkUrl)) {
+            $arr = array_merge($arr, $this->linkUrl);
         }
         /* @noinspection PhpUndefinedMethodInspection */
-        return $presenter->link($this->configure[self::LINK], array_filter($arr));
+        return $presenter->link($this->link, array_filter($arr));
     }
-
 
     /**
      * Get caption.
@@ -118,9 +105,8 @@ class Button
      */
     public function getCaption(): string
     {
-        return $this->configure[self::CAPTION];
+        return $this->caption;
     }
-
 
     /**
      * Get confirm.
@@ -129,9 +115,8 @@ class Button
      */
     public function getConfirm(): string
     {
-        return $this->configure[self::CONFIRM] ?? '';
+        return $this->confirm ?? '';
     }
-
 
     /**
      * Get class.
@@ -140,9 +125,8 @@ class Button
      */
     public function getClass(): string
     {
-        return $this->configure[self::HTML_CLASS] ?? '';
+        return $this->valueHtmlClass ?? '';
     }
-
 
     /**
      * Get data.
@@ -152,7 +136,7 @@ class Button
      */
     public function getData(string $index = null)
     {
-        $data = $this->configure[self::DATA] ?? null;
+        $data = $this->valueData ?? null;
         return ($index ? ($data[$index] ?? null) : $data);
     }
 
@@ -160,7 +144,6 @@ class Button
     /*
      * PHP
      */
-
 
     /**
      * Set caption.
@@ -170,10 +153,9 @@ class Button
      */
     public function setCaption(string $caption): self
     {
-        $this->configure[self::CAPTION] = $caption;
+        $this->caption = $caption;
         return $this;
     }
-
 
     /**
      * Set link.
@@ -184,11 +166,10 @@ class Button
      */
     public function setLink(string $link, array $arguments = []): self
     {
-        $this->configure[self::LINK] = $link;
-        $this->configure[self::LINK_ARGUMENTS] = $arguments;
+        $this->link = $link;
+        $this->linkArguments = $arguments;
         return $this;
     }
-
 
     /**
      * Set url.
@@ -198,10 +179,9 @@ class Button
      */
     public function setUrl(array $arguments = []): self
     {
-        $this->configure[self::LINK_URL] = $arguments;
+        $this->linkUrl = $arguments;
         return $this;
     }
-
 
     /**
      * Set confirm.
@@ -211,10 +191,9 @@ class Button
      */
     public function setConfirm(string $text): self
     {
-        $this->configure[self::CONFIRM] = $text;
+        $this->confirm = $text;
         return $this;
     }
-
 
     /**
      * Set permission.
@@ -225,11 +204,10 @@ class Button
      */
     public function setPermission(string $resource, string $privilege): self
     {
-        $this->configure[self::PERMISSION_RESOURCE] = $resource;
-        $this->configure[self::PERMISSION_PRIVILEGE] = $privilege;
+        $this->permissionResource = $resource;
+        $this->permissionPrivilege = $privilege;
         return $this;
     }
-
 
     /**
      * Set class.
@@ -239,10 +217,9 @@ class Button
      */
     public function setClass(string $class): self
     {
-        $this->configure[self::HTML_CLASS] = $class;
+        $this->valueHtmlClass = $class;
         return $this;
     }
-
 
     /**
      * Set data.
@@ -252,10 +229,9 @@ class Button
      */
     public function setData(array $data): self
     {
-        $this->configure[self::DATA] = $data;
+        $this->valueData = $data;
         return $this;
     }
-
 
     /**
      * Set callback.
@@ -265,7 +241,7 @@ class Button
      */
     public function setCallback(callable $callback): self
     {
-        $this->configure[self::CALLBACK] = $callback;
+        $this->valueCallback = $callback;
         return $this;
     }
 }
