@@ -7,7 +7,6 @@ use GeneralForm\ITemplatePath;
 use Nette\SmartObject;
 use Nette\Utils\DateTime;
 use Nette\Utils\Html;
-use stdClass;
 
 
 /**
@@ -20,20 +19,16 @@ class Column implements ITemplatePath
 {
     use SmartObject;
 
-    const
-        NAME = 'name',
-        HEADER = 'header',
-        FILTER = 'filter',
-        ORDERING = 'ordering',
-        ORDERING_STATE = 'state',
-        ORDERING_NEXT_DIRECTION = 'next_direction',
-        ORDERING_CURRENT_DIRECTION = 'current_direction',
-        DATA = 'data',
-        CALLBACK = 'callback',
-        TEMPLATE = 'template';
+    /** @var string */
+    private $name, $header, $orderColumn, $orderCurrentDirection = '', $orderNextDirection = 'ASC';
+    /** @var bool */
+    private $orderState = false;
 
-    /** @var array */
-    private $configure = [];
+    private $valueData;
+    /** @var callable */
+    private $valueCallback;
+    /** @var string */
+    private $valueTemplate;
     /** @var GridTable */
     private $gridTable;
 
@@ -48,14 +43,15 @@ class Column implements ITemplatePath
     public function __construct(GridTable $gridTable, string $name, string $header = null)
     {
         $this->gridTable = $gridTable;
-        $this->configure[self::NAME] = $name;
-        $this->configure[self::HEADER] = $header;
+        $this->name = $name;
+        $this->header = $header;
     }
 
 
     /**
      * Set order.
      *
+     * @noinspection PhpUnused
      * @param string|null $direction
      * @internal
      */
@@ -67,10 +63,22 @@ class Column implements ITemplatePath
             'DESC' => null,
         ];
 
-        $this->configure[self::ORDERING][self::ORDERING_CURRENT_DIRECTION] = $direction;
-        $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] = $switchDirection[$direction];
+        $this->orderCurrentDirection = $direction;
+        $this->orderNextDirection = $switchDirection[$direction];
     }
 
+
+    /**
+     * Get order column.
+     *
+     * @noinspection PhpUnused
+     * @return string
+     * @internal
+     */
+    public function getOrderColumn(): string
+    {
+        return $this->orderColumn;
+    }
 
     /*
     * LATTE
@@ -84,76 +92,55 @@ class Column implements ITemplatePath
      */
     public function getName(): string
     {
-        return $this->configure[self::NAME];
+        return $this->name;
     }
 
 
     /**
      * Get caption.
      *
+     * @noinspection PhpUnused
      * @return string
      */
     public function getCaption(): string
     {
-        return ($this->configure[self::HEADER] ?: $this->configure[self::NAME]);
-    }
-
-
-    /**
-     * Is filter.
-     *
-     * @return bool
-     */
-    public function isFilter(): bool
-    {
-        return (bool) ($this->configure[self::FILTER] ?? false);
-    }
-
-
-    /**
-     * Get filter.
-     *
-     * @return array
-     */
-    public function getFilter(): array
-    {
-        if (is_bool($this->configure[self::FILTER])) {
-            return [];  //TODO doresit jak bude potreba!
-        }
-        return ($this->configure[self::FILTER] ?? []);
+        return ($this->header ?: $this->name);
     }
 
 
     /**
      * Is ordering.
      *
+     * @noinspection PhpUnused
      * @return bool
      */
     public function isOrdering(): bool
     {
-        return ($this->configure[self::ORDERING][self::ORDERING_STATE] ?? false);
+        return $this->orderState;
     }
 
 
     /**
      * Get order href.
      *
+     * @noinspection PhpUnused
      * @return array
      */
     public function getOrderHref(): array
     {
-        return [$this->configure[self::NAME], (isset($this->configure[self::ORDERING]) ? $this->configure[self::ORDERING][self::ORDERING_NEXT_DIRECTION] : null)];
+        return [$this->name, $this->orderNextDirection];
     }
 
 
     /**
      * Get current order.
      *
+     * @noinspection PhpUnused
      * @return string
      */
     public function getCurrentOrder(): string
     {
-        return $this->configure[self::ORDERING][self::ORDERING_CURRENT_DIRECTION] ?? '';
+        return $this->orderCurrentDirection ?? '';
     }
 
 
@@ -165,7 +152,7 @@ class Column implements ITemplatePath
      */
     public function getData(string $index = null)
     {
-        $data = $this->configure[self::DATA] ?? null;
+        $data = $this->valueData ?? null;
         return ($index ? ($data[$index] ?? null) : $data);
     }
 
@@ -173,22 +160,25 @@ class Column implements ITemplatePath
     /**
      * Get value.
      *
+     * @noinspection PhpUnused
      * @param $data
      * @return string
      */
     public function getValue($data): string
     {
-        $value = (isset($this->configure[self::CALLBACK]) ? $this->configure[self::CALLBACK]($data, $this) : $data[$this->configure[self::NAME]]);
-        if (isset($this->configure[self::TEMPLATE])) {
+        $value = (isset($this->valueCallback) ? call_user_func($this->valueCallback, $data, $this) : $data[$this->name]);
+        if (isset($this->valueTemplate)) {
             $template = $this->gridTable->getTemplate();
-            /** @var stdClass $template */
+            /** @noinspection PhpUndefinedFieldInspection */
             $template->column = $this;
+            /** @noinspection PhpUndefinedFieldInspection */
             $template->value = $value;
+            /** @noinspection PhpUndefinedFieldInspection */
             $template->data = $data;
             foreach ($this->getData() ?? [] as $key => $val) {
                 $template->$key = $val;
             }
-            $template->setFile($this->configure[self::TEMPLATE]);
+            $template->setFile($this->valueTemplate);
             return (string) $template;
         }
         return (string) $value;
@@ -203,15 +193,29 @@ class Column implements ITemplatePath
     /**
      * Set ordering.
      *
-     * @param bool $ordering
+     * @noinspection PhpUnused
+     * @param bool $state
      * @return Column
      */
-    public function setOrdering(bool $ordering = true): self
+    public function setOrdering(bool $state = true): self
     {
-        $this->configure[self::ORDERING] = [
-            self::ORDERING_STATE          => $ordering,
-            self::ORDERING_NEXT_DIRECTION => 'ASC',
-        ];
+        $this->orderState = $state;
+        $this->orderColumn = $this->name;
+        return $this;
+    }
+
+
+    /**
+     * Set ordering by.
+     *
+     * @noinspection PhpUnused
+     * @param string $column
+     * @return Column
+     */
+    public function setOrderingBy(string $column): self
+    {
+        $this->orderState = true;
+        $this->orderColumn = $column;
         return $this;
     }
 
@@ -224,7 +228,7 @@ class Column implements ITemplatePath
      */
     public function setData(array $data): self
     {
-        $this->configure[self::DATA] = $data;
+        $this->valueData = $data;
         return $this;
     }
 
@@ -232,12 +236,13 @@ class Column implements ITemplatePath
     /**
      * Set callback.
      *
+     * @noinspection PhpUnused
      * @param callable $callback
      * @return Column
      */
     public function setCallback(callable $callback): self
     {
-        $this->configure[self::CALLBACK] = $callback;
+        $this->valueCallback = $callback;
         return $this;
     }
 
@@ -246,12 +251,13 @@ class Column implements ITemplatePath
      * Set format dateTime.
      * Internal callback.
      *
+     * @noinspection PhpUnused
      * @param string $format
      * @return Column
      */
     public function setFormatDateTime(string $format = 'Y-m-d H:i:s'): self
     {
-        $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
+        $this->valueCallback = function ($data, Column $context) use ($format) {
             $value = $data[$context->getName()];
             if ($value) {
                 if ($value instanceof DateInterval) {
@@ -270,11 +276,12 @@ class Column implements ITemplatePath
      * Set format boolean.
      * Internal callback.
      *
+     * @noinspection PhpUnused
      * @return Column
      */
     public function setFormatBoolean(): self
     {
-        $this->configure[self::CALLBACK] = function ($data, Column $context) {
+        $this->valueCallback = function ($data, Column $context) {
             $value = (bool) $data[$context->getName()];
             return Html::el('input', ['type' => 'checkbox', 'disabled' => true, 'checked' => $value]);
         };
@@ -286,12 +293,13 @@ class Column implements ITemplatePath
      * Set format string.
      * Internal callback.
      *
+     * @noinspection PhpUnused
      * @param string $format
      * @return Column
      */
     public function setFormatString(string $format): self
     {
-        $this->configure[self::CALLBACK] = function ($data, Column $context) use ($format) {
+        $this->valueCallback = function ($data, Column $context) use ($format) {
             $value = $data[$context->getName()];
             if ($value) {
                 return sprintf($format, $value);
@@ -311,23 +319,10 @@ class Column implements ITemplatePath
      */
     public function setTemplatePath(string $path, array $data = []): self
     {
-        $this->configure[self::TEMPLATE] = $path;
+        $this->valueTemplate = $path;
         if ($data) {
-            $this->setData(array_merge($this->configure[self::DATA] ?? [], $data));
+            $this->setData(array_merge($this->valueData ?? [], $data));
         }
-        return $this;
-    }
-
-
-    /**
-     * Set filter.
-     *
-     * @param array|null $values
-     * @return Column
-     */
-    public function setFilter(array $values = null): self
-    {
-        $this->configure[self::FILTER] = $values ?? true;
         return $this;
     }
 }

@@ -10,7 +10,7 @@ $ composer require geniv/nette-grid-table
 ```
 or
 ```json
-"geniv/nette-grid-table": "^1.3"
+"geniv/nette-grid-table": "^1.4"
 ```
 
 require:
@@ -108,12 +108,6 @@ setSortable(bool $state): self
 isSortable(): bool
 setPrimaryKey(string $pk): self
 setDefaultOrder(array $order): self
-setSelection(array $action): self
-isSelection(): bool
-setSelectRow(array $data)   - load data from session
-setFilter(bool $state): self
-isFilter(): bool
-setSelectFilter(array $data): self  - load data from session
 addButton(string $caption): Button
 addColumn(string $name, string $header = null): Column
 
@@ -126,6 +120,7 @@ onSelectPaginatorRange(int $value)
 ##### class Column
 ```php
 setOrdering(bool $ordering = true): self
+setOrderingBy(string $column): self
 setData(array $data): self
 // internal variable: $column, $value, $data + custom over setData([])
 setCallback(callable $callback): self  -  function ($data, Column $context) { return $data[$context->getName()]; }
@@ -133,7 +128,7 @@ setTemplatePath(string $path, array $data = []): self
 setFormatDateTime(string $format): self
 setFormatBoolean(): self
 setFormatString(string $format): self
-setFilter(array $values): self
+//setFilter(array $values): self
 ```
 
 ##### class Button

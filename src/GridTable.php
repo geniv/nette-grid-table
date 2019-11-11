@@ -19,29 +19,23 @@ use Traversable;
  *
  * @author  geniv
  * @package GridTable
- * @method onSelectRow(array $array)
  * @method onColumnOrder(string $column, string|null $direction)
- * @method onSelectFilter(array $selectFilter)
  * @method onSelectPaginatorRange(int $value)
  */
 class GridTable extends Control implements ITemplatePath
 {
-    const
-        CONFIGURE_PK = 'pk',
-        CONFIGURE_ORDER = 'order',
-        CONFIGURE_SORTABLE = 'sortable',
-        CONFIGURE_SELECTION = 'selection',
-        CONFIGURE_FILTER = 'filter',
-
-        COLUMN = 'column',
-        ACTION = 'action';
+    /** @var array */
+    private $columns = [], $actions = [];
 
     /** @var ITranslator */
     private $translator = null;
     /** @var string */
-    private $templatePath, $cacheId;
-    /** @var Configure */
-    private $configure;
+    private $templatePath, $cacheId, $columnPk;
+
+    /** @var bool */
+    private $sortable = false;
+    /** @var array */
+    private $orderDefault = [];
     /** @var IDataSource */
     private $source;
     /** @var array */
@@ -51,9 +45,13 @@ class GridTable extends Control implements ITemplatePath
     /** @var Paginator */
     private $paginator = null;
     /** @var array */
-    private $paginatorRange = [], $selectRow = [], $selectFilter = [];
+    private $paginatorRange = []; //, $selectRow = [], $selectFilter = [];
     /** @var callable */
-    public $onColumnOrder, $onSelectRow, $onSelectFilter, $onSelectPaginatorRange;
+    public
+        /** @noinspection PhpUnused */
+        $onColumnOrder,
+        /** @noinspection PhpUnused */
+        $onSelectPaginatorRange;    ///*$onSelectRow, $onSelectFilter,*/
 
 
     /**
@@ -67,24 +65,9 @@ class GridTable extends Control implements ITemplatePath
         parent::__construct();
 
         $this->translator = $translator;
-
-        $this->configure = new Configure();
         $this->cache = new Cache($storage, 'GridTable-GridTable');
 
         $this->templatePath = __DIR__ . '/GridTable.latte'; // path
-    }
-
-
-    /**
-     * Get configure.
-     *
-     * @noinspection PhpUnused
-     * @return Configure
-     * @internal
-     */
-    public function getConfigure(): Configure
-    {
-        return $this->configure;
     }
 
 
@@ -97,8 +80,8 @@ class GridTable extends Control implements ITemplatePath
     private function getCacheId()
     {
         // internal usage for inner-cache in latte
-        $columnId = implode(array_keys($this->configure->getConfigure(self::COLUMN, [])));
-        $listId = serialize(trim((string) $this->source)) . serialize($this->selectRow);
+        $columnId = implode(array_keys($this->columns));
+        $listId = serialize(trim((string) $this->source));
         return $columnId . $listId . $this->cacheId;
     }
 
@@ -237,7 +220,7 @@ class GridTable extends Control implements ITemplatePath
     public function setPaginator(IComponent $visualPaginator = null, callable $callback = null): self
     {
         // disable pagination for sortable
-        if (!$this->configure->getConfigure(self::CONFIGURE_SORTABLE, false)) {
+        if (!$this->sortable) {
             if (!$callback) {
                 // default paginator component usage VisualPaginator
                 /* @noinspection PhpUndefinedMethodInspection */
@@ -294,7 +277,7 @@ class GridTable extends Control implements ITemplatePath
     public function setSortable(bool $state): self
     {
         // disable pagination for all items
-        $this->configure->setConfigure(self::CONFIGURE_SORTABLE, $state);
+        $this->sortable = $state;
         return $this;
     }
 
@@ -307,7 +290,7 @@ class GridTable extends Control implements ITemplatePath
      */
     public function isSortable(): bool
     {
-        return (bool) $this->configure->getConfigure(self::CONFIGURE_SORTABLE, false);
+        return $this->sortable;
     }
 
 
@@ -320,7 +303,7 @@ class GridTable extends Control implements ITemplatePath
      */
     public function setPrimaryKey(string $pk): self
     {
-        $this->configure->setConfigure(self::CONFIGURE_PK, $pk);
+        $this->columnPk = $pk;
         return $this;
     }
 
@@ -334,93 +317,8 @@ class GridTable extends Control implements ITemplatePath
      */
     public function setDefaultOrder(array $order): self
     {
-        $this->configure->setConfigure(self::CONFIGURE_ORDER, $order);
+        $this->orderDefault = $order;
         return $this;
-    }
-
-
-    /**
-     * Set selection.
-     * Turn on selection.
-     *
-     * @noinspection PhpUnused
-     * @param array $action
-     * @return GridTable
-     * @deprecated
-     */
-    public function setSelection(array $action): self
-    {
-        $this->configure->setConfigure(self::CONFIGURE_SELECTION, $action);
-        return $this;
-    }
-
-
-    /**
-     * Is selection.
-     *
-     * @noinspection PhpUnused
-     * @return bool
-     * @deprecated
-     */
-    public function isSelection(): bool
-    {
-        return (bool) $this->configure->getConfigure(self::CONFIGURE_SELECTION, false);
-    }
-
-
-    /**
-     * Set select row.
-     * Load data from session.
-     *
-     * @noinspection PhpUnused
-     * @param array $data
-     * @deprecated
-     */
-    public function setSelectRow(array $data)
-    {
-        $this->selectRow = $data;
-    }
-
-
-    /**
-     * Handle selection all row.
-     *
-     * @noinspection PhpUnused
-     * @param bool $state
-     * @deprecated
-     */
-    public function handleSelectionAllRow(bool $state)
-    {
-        $list = $this->getList();
-        $pk = $this->configure->getConfigure(self::CONFIGURE_PK);
-        foreach ($list as $item) {
-            $this->selectRow[$item[$pk]] = $state;
-        }
-        $this->onSelectRow($this->selectRow);
-
-        //TODO doresti oznacivani uplne vseho a odznacovani uplne vseho!!
-
-        // redraw snippet
-        $this->cleanCache();
-    }
-
-
-    /**
-     * Handle selection row.
-     *
-     * @noinspection PhpUnused
-     * @param int  $id
-     * @param bool $state
-     * @deprecated
-     */
-    public function handleSelectionRow(int $id, bool $state)
-    {
-        $this->selectRow[$id] = $state;
-
-        $this->onSelectRow($this->selectRow);
-
-        // redraw snippet
-        $this->cleanCache();
     }
 
 
@@ -434,7 +332,7 @@ class GridTable extends Control implements ITemplatePath
     public function addButton(string $caption): Button
     {
         $button = new Button($caption);
-        $this->configure->addConfigure(self::ACTION, $caption, $button);
+        $this->actions[$caption] = $button;
         return $button;
     }
 
@@ -450,7 +348,7 @@ class GridTable extends Control implements ITemplatePath
     public function addColumn(string $name, string $header = null): Column
     {
         $column = new Column($this, $name, $header);
-        $this->configure->addConfigure(self::COLUMN, $name, $column);
+        $this->columns[$name] = $column;
         return $column;
     }
 
@@ -464,88 +362,20 @@ class GridTable extends Control implements ITemplatePath
      */
     public function handleColumnOrder(string $column, string $direction = null)
     {
-//        \Tracy\Debugger::fireLog('handleColumnOrder:: ' . $column . '-' . $direction);
         // set next order direction
-        $columns = $this->configure->getConfigure(self::COLUMN);
+        $columns = $this->columns;
         if (isset($columns[$column])) {
             /* @noinspection PhpUndefinedMethodInspection */
             $columns[$column]->setOrder($direction);
         }
 
-        // set default order
+        // rewrite default order
         if ($direction) {
-            $this->configure->setConfigure(self::CONFIGURE_ORDER, [$column => $direction]);
+            /** @noinspection PhpUndefinedMethodInspection */
+            $this->orderDefault = [$columns[$column]->getOrderColumn() => $direction];
         }
 
         $this->onColumnOrder($column, $direction);
-
-        // redraw snippet
-        $this->cleanCache();
-    }
-
-
-    /**
-     * Set filter.
-     * Turn on filter.
-     *
-     * @noinspection PhpUnused
-     * @param bool $state
-     * @return GridTable
-     * @deprecated
-     */
-    public function setFilter(bool $state): self
-    {
-        $this->configure->setConfigure(self::CONFIGURE_FILTER, $state);
-        return $this;
-    }
-
-
-    /**
-     * Is select filter.
-     *
-     * @noinspection PhpUnused
-     * @return bool
-     * @deprecated
-     */
-    public function isFilter(): bool
-    {
-        return (bool) $this->configure->getConfigure(self::CONFIGURE_FILTER, false);
-    }
-
-
-    /**
-     * Set select filter.
-     * Load data from session.
-     *
-     * @noinspection PhpUnused
-     * @param array $data
-     * @return GridTable
-     * @deprecated
-     */
-    public function setSelectFilter(array $data): self
-    {
-        $this->selectFilter = $data;
-
-        //TODO pokud se nedefinuje obsah tak si udela grupu z danehe sloupce + to zanese do cache
-        // tento vyber se taky posype do session pres externi callback volani!!!
-        return $this;
-    }
-
-
-    /**
-     * Handle select filter.
-     *
-     * @noinspection PhpUnused
-     * @param string $column
-     * @param string $filter
-     * @param bool   $state
-     * @deprecated
-     */
-    public function handleSelectFilter(string $column, string $filter, bool $state)
-    {
-        $this->selectFilter[$column][$filter] = $state;
-
-        $this->onSelectFilter($this->selectFilter);
 
         // redraw snippet
         $this->cleanCache();
@@ -571,6 +401,7 @@ class GridTable extends Control implements ITemplatePath
             }
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         return $this->source->getIterator(); // call getIterator() -- first (build data)
     }
 
@@ -589,7 +420,7 @@ class GridTable extends Control implements ITemplatePath
         }
 
         // ordering
-        $order = $this->configure->getConfigure(self::CONFIGURE_ORDER);
+        $order = $this->orderDefault;
         if ($order) {
             // search natural order
             $natural = array_filter($order, function ($item) {
@@ -610,16 +441,11 @@ class GridTable extends Control implements ITemplatePath
         /** @var stdClass $template */
         $template->list = $this->getList();
         $template->cacheId = $this->getCacheId();   // for inner-cache; call __toString() -- second (use serialize build data)
-        $template->configure = $this->configure->getConfigures();
-        $template->columns = $this->configure->getConfigure(self::COLUMN, []);
-        $template->action = $this->configure->getConfigure(self::ACTION, []);
-        $template->selectRow = $this->selectRow ?? [];
-        $template->selectFilter = $this->selectFilter ?? [];
+        $template->pk = $this->columnPk;
+        $template->columns = $this->columns;
+        $template->action = $this->actions;
         $template->paginatorRange = $this->paginatorRange ?? [];
         $template->paginatorItemsPerPage = ($this->paginator ? $this->paginator->getItemsPerPage() : 10);
-
-//        dump($template->configure);
-//        dump($template->columns);
 
         /* @noinspection PhpUndefinedMethodInspection */
         $template->setTranslator($this->translator);

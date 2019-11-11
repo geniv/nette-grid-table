@@ -8,6 +8,7 @@ use Traversable;
 /**
  * Class DibiDataSource
  *
+ * @noinspection PhpUnused
  * @author  geniv
  * @package GridTable\Drivers
  */
@@ -65,6 +66,7 @@ class DibiDataSource implements IDataSource
      */
     public function orderBy($order): self
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $this->data->orderBy($order);
         return $this;
     }
@@ -78,6 +80,7 @@ class DibiDataSource implements IDataSource
      */
     public function limit(int $limit): self
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $this->data->limit($limit);
         return $this;
     }
@@ -91,6 +94,7 @@ class DibiDataSource implements IDataSource
      */
     public function offset(int $offset): self
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $this->data->offset($offset);
         return $this;
     }
@@ -104,6 +108,7 @@ class DibiDataSource implements IDataSource
     public function __toString()
     {
         // for support (string)$this->source in getCacheId() method
+        /** @noinspection PhpUndefinedMethodInspection */
         return $this->data->__toString();
     }
 }
