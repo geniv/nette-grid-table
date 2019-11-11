@@ -5,6 +5,7 @@ namespace GridTable;
 use Nette\Application\IPresenter;
 use Nette\SmartObject;
 
+
 /**
  * Class Button
  *
@@ -17,12 +18,11 @@ class Button
 
     /** @var string */
     private $caption, $confirm, $link, $permissionResource, $permissionPrivilege, $valueHtmlClass;
-
     /** @var array */
     private $linkArguments, $linkUrl, $valueData;
-
     /** @var callable */
     private $valueCallback;
+
 
     /**
      * Button constructor.
@@ -33,15 +33,16 @@ class Button
     {
         $this->caption = $caption;
     }
-//TODO reformat!!
 
     /*
      * LATTE
      */
 
+
     /**
      * Is allowed.
      *
+     * @noinspection PhpUnused
      * @param IPresenter $presenter
      * @return bool
      */
@@ -55,9 +56,11 @@ class Button
         return true;
     }
 
+
     /**
      * Get href.
      *
+     * @noinspection PhpUnused
      * @param IPresenter $presenter
      * @param            $data
      * @return string
@@ -73,7 +76,7 @@ class Button
         }, 'request');
 
         // merge data and request data
-        $data = array_merge((array)$data, $requestData);
+        $data = array_merge((array) $data, $requestData);
         // call callback
         if (isset($this->valueCallback)) {
             $data = call_user_func($this->valueCallback, $data, $this);
@@ -98,9 +101,11 @@ class Button
         return $presenter->link($this->link, array_filter($arr));
     }
 
+
     /**
      * Get caption.
      *
+     * @noinspection PhpUnused
      * @return string
      */
     public function getCaption(): string
@@ -108,15 +113,18 @@ class Button
         return $this->caption;
     }
 
+
     /**
      * Get confirm.
      *
+     * @noinspection PhpUnused
      * @return string
      */
     public function getConfirm(): string
     {
         return $this->confirm ?? '';
     }
+
 
     /**
      * Get class.
@@ -128,9 +136,11 @@ class Button
         return $this->valueHtmlClass ?? '';
     }
 
+
     /**
      * Get data.
      *
+     * @noinspection PhpUnused
      * @param string|null $index
      * @return mixed|null
      */
@@ -148,6 +158,7 @@ class Button
     /**
      * Set caption.
      *
+     * @noinspection PhpUnused
      * @param string $caption
      * @return Button
      */
@@ -157,9 +168,11 @@ class Button
         return $this;
     }
 
+
     /**
      * Set link.
      *
+     * @noinspection PhpUnused
      * @param string $link
      * @param array  $arguments
      * @return Button
@@ -171,9 +184,11 @@ class Button
         return $this;
     }
 
+
     /**
      * Set url.
      *
+     * @noinspection PhpUnused
      * @param array $arguments
      * @return Button
      */
@@ -183,9 +198,11 @@ class Button
         return $this;
     }
 
+
     /**
      * Set confirm.
      *
+     * @noinspection PhpUnused
      * @param string $text
      * @return Button
      */
@@ -195,9 +212,11 @@ class Button
         return $this;
     }
 
+
     /**
      * Set permission.
      *
+     * @noinspection PhpUnused
      * @param string $resource
      * @param string $privilege
      * @return Button
@@ -209,9 +228,11 @@ class Button
         return $this;
     }
 
+
     /**
      * Set class.
      *
+     * @noinspection PhpUnused
      * @param string $class
      * @return Button
      */
@@ -221,9 +242,11 @@ class Button
         return $this;
     }
 
+
     /**
      * Set data.
      *
+     * @noinspection PhpUnused
      * @param array $data
      * @return Button
      */
@@ -233,9 +256,11 @@ class Button
         return $this;
     }
 
+
     /**
      * Set callback.
      *
+     * @noinspection PhpUnused
      * @param callable $callback
      * @return Button
      */
