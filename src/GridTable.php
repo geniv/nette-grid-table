@@ -35,8 +35,8 @@ class GridTable extends Control implements ITemplatePath
 
     /** @var bool */
     private $sortable = false;
-    /** @var array */
-    private $orderDefault = [];
+    /** @var array|string */
+    private $orderDefault;
     /** @var IDataSource */
     private $source;
     /** @var array */
