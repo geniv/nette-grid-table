@@ -420,17 +420,8 @@ class GridTable extends Control implements ITemplatePath
         }
 
         // ordering
-        $order = $this->orderDefault;
-        if ($order) {
-            if (is_array($order)) {
-                // distribute array order
-                foreach ($order as $item) {
-                    $this->source->orderBy($item);
-                }
-            } else {
-                // direct order
-                $this->source->orderBy($order);
-            }
+        if ($this->orderDefault) {
+            $this->source->orderBy($this->orderDefault);
         }
 
         /** @var stdClass $template */
