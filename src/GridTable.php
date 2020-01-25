@@ -2,6 +2,7 @@
 
 namespace GridTable;
 
+use Exception;
 use GeneralForm\ITemplatePath;
 use GridTable\Drivers\IDataSource;
 use Nette\Application\UI\Control;
@@ -312,10 +313,10 @@ class GridTable extends Control implements ITemplatePath
      * Set default order.
      *
      * @noinspection PhpUnused
-     * @param array $order
+     * @param array|string $order
      * @return GridTable
      */
-    public function setDefaultOrder(array $order): self
+    public function setDefaultOrder($order): self
     {
         $this->orderDefault = $order;
         return $this;
@@ -365,13 +366,11 @@ class GridTable extends Control implements ITemplatePath
         // set next order direction
         $columns = $this->columns;
         if (isset($columns[$column])) {
-            /* @noinspection PhpUndefinedMethodInspection */
             $columns[$column]->setOrder($direction);
         }
 
         // rewrite default order
         if ($direction) {
-            /** @noinspection PhpUndefinedMethodInspection */
             $this->orderDefault = [$columns[$column]->getOrderColumn() => $direction];
         }
 
@@ -386,6 +385,7 @@ class GridTable extends Control implements ITemplatePath
      * Get list.
      *
      * @return Traversable
+     * @throws Exception
      */
     private function getList(): Traversable
     {
@@ -401,7 +401,6 @@ class GridTable extends Control implements ITemplatePath
             }
         }
 
-        /** @noinspection PhpUndefinedMethodInspection */
         return $this->source->getIterator(); // call getIterator() -- first (build data)
     }
 
@@ -410,6 +409,7 @@ class GridTable extends Control implements ITemplatePath
      * Render.
      *
      * @throws GridTableException
+     * @throws Exception
      */
     public function render()
     {
@@ -422,18 +422,13 @@ class GridTable extends Control implements ITemplatePath
         // ordering
         $order = $this->orderDefault;
         if ($order) {
-            // search natural order
-            $natural = array_filter($order, function ($item) {
-                return (strpos($item, '+') !== false);
-            });
-
-            if ($natural) {
+            if (is_array($order)) {
+                // distribute array order
                 foreach ($order as $item) {
-                    /* @noinspection PhpUndefinedMethodInspection */
                     $this->source->orderBy($item);
                 }
             } else {
-                /* @noinspection PhpUndefinedMethodInspection */
+                // direct order
                 $this->source->orderBy($order);
             }
         }
@@ -447,7 +442,6 @@ class GridTable extends Control implements ITemplatePath
         $template->paginatorRange = $this->paginatorRange ?? [];
         $template->paginatorItemsPerPage = ($this->paginator ? $this->paginator->getItemsPerPage() : 10);
 
-        /* @noinspection PhpUndefinedMethodInspection */
         $template->setTranslator($this->translator);
         $template->setFile($this->templatePath);
         $template->render();
